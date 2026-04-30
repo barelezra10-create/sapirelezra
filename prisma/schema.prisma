@@ -1,0 +1,104 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearchPostgres"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Recipe {
+  id              String    @id @default(cuid())
+  slug            String    @unique
+  title           String
+  subtitle        String?
+  heroImage       String
+  galleryImages   String[]
+  sapirIntro      String    @db.Text
+  prepTimeMin     Int
+  cookTimeMin     Int
+  totalTimeMin    Int
+  servings        Int
+  difficulty      Difficulty
+  ingredients     Json
+  steps           Json
+  sapirTips       String[]
+  variations      Json?
+  kosher          Kosher
+  dietTags        String[]
+  ageRange        String?
+  seoTitle        String
+  seoDescription  String
+  status          RecipeStatus @default(DRAFT)
+  publishedAt     DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  categories      CategoryOnRecipe[]
+  tags            TagOnRecipe[]
+
+  @@index([status, publishedAt])
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  name      String
+  parentId  String?
+  parent    Category?  @relation("CategoryTree", fields: [parentId], references: [id])
+  children  Category[] @relation("CategoryTree")
+  recipes   CategoryOnRecipe[]
+  order     Int       @default(0)
+}
+
+model CategoryOnRecipe {
+  recipe     Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  recipeId   String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId String
+  @@id([recipeId, categoryId])
+}
+
+model Tag {
+  id      String  @id @default(cuid())
+  slug    String  @unique
+  name    String
+  recipes TagOnRecipe[]
+}
+
+model TagOnRecipe {
+  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  recipeId String
+  tag      Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  tagId    String
+  @@id([recipeId, tagId])
+}
+
+model GenerationJob {
+  id          String    @id @default(cuid())
+  recipeSlug  String
+  status      String
+  errorMsg    String?
+  costUsd     Decimal?  @db.Decimal(10, 4)
+  startedAt   DateTime  @default(now())
+  finishedAt  DateTime?
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum Kosher {
+  DAIRY
+  MEAT
+  PAREVE
+  NOT_KOSHER
+}
+
+enum RecipeStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
