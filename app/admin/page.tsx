@@ -23,14 +23,9 @@ export default async function AdminHome({ searchParams }: { searchParams: Promis
     <main className="container mx-auto px-6 py-8">
       <div className="flex items-center justify-between mb-6">
         <h1 className="font-display text-4xl text-burgundy">מתכונים</h1>
-        <div className="flex gap-3">
-          <Link href="/admin/recipes/new" className="bg-burgundy text-cream px-4 py-2 rounded">
-            מתכון חדש
-          </Link>
-          <form action="/admin/logout" method="POST">
-            <button className="text-ink-muted">יציאה</button>
-          </form>
-        </div>
+        <Link href="/admin/recipes/new" className="bg-burgundy text-cream px-4 py-2 rounded">
+          מתכון חדש
+        </Link>
       </div>
       <div className="flex gap-4 mb-4 text-sm text-ink-muted">
         {counts.map((c) => (
