@@ -20,6 +20,9 @@ const COST_CAP_USD = 400;
 const PER_RECIPE_CAP_USD = 0.5;
 const COST_PER_TEXT_GEN = 0.05;
 const COST_PER_IMAGE = 0.04;
+const SKIP_IMAGES = process.env.SKIP_IMAGES === "1" || !process.env.R2_ACCESS_KEY_ID;
+const PLACEHOLDER_HERO = "/sapir/sapir-wide-kitchen.png";
+const CONCURRENCY = parseInt(process.env.CONCURRENCY ?? "4", 10);
 
 const FALLBACK_TARGETS: Target[] = [
   {
@@ -106,19 +109,21 @@ async function generateOne(target: Target): Promise<void> {
       console.warn(`  Voice issues for "${target.title}":`, issues);
     }
 
-    const heroUrl = await generateRecipeHero(content.title, content.sapirIntro);
-    cost += COST_PER_IMAGE;
-
+    let heroUrl = PLACEHOLDER_HERO;
     const stepImages: Record<number, string> = {};
-    const stepsToImage = (content.steps as Array<{ order: number; text: string }>).slice(0, 3);
-    for (const s of stepsToImage) {
-      if (cost + COST_PER_IMAGE > PER_RECIPE_CAP_USD) break;
-      try {
-        stepImages[s.order] = await generateRecipeStepImage(s.text, content.title);
-        cost += COST_PER_IMAGE;
-      } catch (err: unknown) {
-        const msg = err instanceof Error ? err.message : String(err);
-        console.warn(`  Step image failed for step ${s.order}: ${msg}`);
+    if (!SKIP_IMAGES) {
+      heroUrl = await generateRecipeHero(content.title, content.sapirIntro);
+      cost += COST_PER_IMAGE;
+      const stepsToImage = (content.steps as Array<{ order: number; text: string }>).slice(0, 3);
+      for (const s of stepsToImage) {
+        if (cost + COST_PER_IMAGE > PER_RECIPE_CAP_USD) break;
+        try {
+          stepImages[s.order] = await generateRecipeStepImage(s.text, content.title);
+          cost += COST_PER_IMAGE;
+        } catch (err: unknown) {
+          const msg = err instanceof Error ? err.message : String(err);
+          console.warn(`  Step image failed for step ${s.order}: ${msg}`);
+        }
       }
     }
 
@@ -191,22 +196,37 @@ async function main() {
   const targets = readTargets();
   const limit = argLimit > 0 ? Math.min(argLimit, targets.length) : targets.length;
 
-  console.log(`Processing ${limit} of ${targets.length} targets...`);
+  console.log(`Processing ${limit} of ${targets.length} targets (concurrency=${CONCURRENCY}, skip-images=${SKIP_IMAGES})...`);
 
-  for (let i = 0; i < limit; i++) {
-    const spent = await totalSpentSoFar();
-    if (spent >= COST_CAP_USD) {
-      console.error(`Cost cap hit ($${spent.toFixed(2)}). Stopping.`);
-      break;
+  let processed = 0;
+  let nextIndex = 0;
+
+  async function worker(workerId: number) {
+    while (true) {
+      const i = nextIndex++;
+      if (i >= limit) return;
+      const spent = await totalSpentSoFar();
+      if (spent >= COST_CAP_USD) {
+        console.error(`Cost cap hit ($${spent.toFixed(2)}). Worker ${workerId} stopping.`);
+        return;
+      }
+      try {
+        await generateOne(targets[i]);
+      } catch (err) {
+        console.error(`Worker ${workerId} unhandled:`, err);
+      }
+      processed++;
+      if (processed % 20 === 0) {
+        const s = await totalSpentSoFar();
+        console.log(`[${processed}/${limit}] cumulative spent: $${s.toFixed(2)}`);
+      }
     }
-    if (i % 10 === 0) {
-      console.log(`[${i + 1}/${limit}] cumulative spent: $${spent.toFixed(2)}`);
-    }
-    await generateOne(targets[i]);
   }
 
+  await Promise.all(Array.from({ length: CONCURRENCY }, (_, i) => worker(i)));
+
   await db.$disconnect();
-  console.log("Done.");
+  console.log(`Done. Processed ${processed} recipes.`);
 }
 
 main().catch(async (e) => {

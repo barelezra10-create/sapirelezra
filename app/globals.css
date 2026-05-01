@@ -1,19 +1,23 @@
 @import "tailwindcss";
 
 @theme {
-  --color-burgundy: #6B1F2A;
-  --color-burgundy-deep: #4A1219;
-  --color-burgundy-light: #8C2E3D;
-  --color-cream: #F5EFE3;
-  --color-cream-dark: #EBE4D3;
-  --color-cream-warm: #FAF6ED;
-  --color-paper: #FCFAF4;
-  --color-ink: #1A1410;
-  --color-ink-deep: #0E0A07;
-  --color-ink-muted: #6B5D52;
-  --color-olive: #5C6B47;
-  --color-mustard: #C8924C;
-  --color-brass: #B89668;
+  /* Vibrant Mediterranean cookbook palette */
+  --color-burgundy: #D03A2E;        /* tomato/pomegranate red — main accent */
+  --color-burgundy-deep: #962219;   /* deeper red for hover/contrast */
+  --color-burgundy-light: #E66B5A;  /* warm coral for highlights */
+  --color-cream: #FFF1D6;           /* apricot cream */
+  --color-cream-dark: #F7DEB8;      /* honey cream */
+  --color-cream-warm: #FFF7E5;      /* warm off-white default bg */
+  --color-paper: #FFFCF1;           /* near-white paper */
+  --color-ink: #2A1A0E;             /* warm dark espresso (was cold near-black) */
+  --color-ink-deep: #1A0F08;        /* deepest espresso */
+  --color-ink-muted: #7A5F4A;       /* warm taupe */
+  --color-olive: #708F3E;           /* vivid olive green */
+  --color-olive-deep: #4E6628;      /* darker olive */
+  --color-mustard: #F2A93B;         /* bright marigold */
+  --color-saffron: #E8771C;         /* saffron orange — new accent */
+  --color-pistachio: #A4B884;       /* soft sage for tags */
+  --color-brass: #C9A875;
 
   --font-display: var(--font-frank), Georgia, serif;
   --font-body: var(--font-heebo), system-ui, sans-serif;
@@ -26,7 +30,7 @@
 body {
   background-color: var(--color-cream-warm);
   background-image:
-    radial-gradient(circle at 1px 1px, rgba(26, 20, 16, 0.035) 1px, transparent 0);
+    radial-gradient(circle at 1px 1px, rgba(208, 58, 46, 0.05) 1px, transparent 0);
   background-size: 28px 28px;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;

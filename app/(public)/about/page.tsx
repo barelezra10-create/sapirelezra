@@ -38,7 +38,7 @@ export default function AboutPage() {
             </div>
             <div className="col-span-12 lg:col-span-3 fade-up" style={{ animationDelay: "260ms" }}>
               <p className="prose-sapir text-2xl leading-snug">
-                בשלנית בנשמה. אמא בפועל. תלמידה של סבתא מזל.
+                בשלנית בנשמה. אמא בפועל. תלמידה של סבתא מזל, עם נטייה לקליל יותר כשאפשר.
               </p>
             </div>
           </div>
