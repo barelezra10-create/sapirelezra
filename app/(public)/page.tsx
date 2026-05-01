@@ -19,9 +19,8 @@ export default async function Home() {
     }),
   ]);
 
-  const featuredHero = allPublished[0];
-  const weekFeature = allPublished[1] ?? allPublished[0];
-  const remainingRecent = allPublished.slice(2, 8);
+  const weekFeature = allPublished[0];
+  const remainingRecent = allPublished.slice(1, 9);
 
   // Compute total recipe count per top category, including children's recipes
   const categoriesWithCounts = await Promise.all(
@@ -78,39 +77,29 @@ export default async function Home() {
               </div>
             </div>
 
-            {/* Feature card — asymmetric, hangs into next section */}
-            {featuredHero && (
-              <div className="col-span-12 lg:col-span-4 fade-up" style={{ animationDelay: "300ms" }}>
-                <Link href={`/recipes/${encodeURIComponent(featuredHero.slug)}`} className="group block">
-                  <div className="relative">
-                    <span className="absolute -top-3 right-4 z-10 bg-burgundy text-cream-warm text-[10px] tracking-[0.25em] uppercase px-3 py-1.5">
-                      בחירת ספיר
-                    </span>
-                    <div className="aspect-[3/4] overflow-hidden bg-cream-dark img-vignette">
-                      <Image
-                        src={featuredHero.heroImage}
-                        alt={featuredHero.title}
-                        width={800}
-                        height={1066}
-                        className="img-hover w-full h-full object-cover"
-                        priority
-                      />
-                    </div>
+            {/* Sapir illustration — establishes the persona visually */}
+            <div className="col-span-12 lg:col-span-4 fade-up" style={{ animationDelay: "300ms" }}>
+              <figure>
+                <div className="relative">
+                  <span className="absolute -top-3 right-4 z-10 bg-burgundy text-cream-warm text-[10px] tracking-[0.25em] uppercase px-3 py-1.5">
+                    הכירי את ספיר
+                  </span>
+                  <div className="aspect-[3/4] overflow-hidden bg-cream-dark">
+                    <Image
+                      src="/sapir/sapir-hero-portrait.png"
+                      alt="ספיר אלעזרא במטבח שלה"
+                      width={800}
+                      height={1066}
+                      className="w-full h-full object-cover"
+                      priority
+                    />
                   </div>
-                  <div className="mt-5 space-y-2">
-                    <div className="text-[11px] tracking-[0.2em] uppercase text-ink-muted">
-                      {featuredHero.totalTimeMin} דק׳ · {diffLabel(featuredHero.difficulty)}
-                    </div>
-                    <h2 className="card-title font-display text-3xl md:text-[2.6rem] leading-[1.05]">
-                      {featuredHero.title}
-                    </h2>
-                    {featuredHero.subtitle && (
-                      <p className="text-ink-muted text-base leading-snug">{featuredHero.subtitle}</p>
-                    )}
-                  </div>
-                </Link>
-              </div>
-            )}
+                </div>
+                <figcaption className="mt-4 text-[11px] tracking-[0.2em] uppercase text-ink-muted text-center">
+                  ספיר במטבח הביתי שלה
+                </figcaption>
+              </figure>
+            </div>
           </div>
         </div>
       </section>
@@ -165,23 +154,40 @@ export default async function Home() {
         </section>
       )}
 
-      {/* PULL QUOTE */}
+      {/* PULL QUOTE — Sapir at her desk */}
       <section className="bg-ink text-cream-warm">
-        <div className="container mx-auto px-6 py-32 md:py-40 text-center">
-          <div className="ornament mb-10" />
-          <p className="font-display italic text-4xl md:text-7xl leading-tight max-w-4xl mx-auto">
-            &ldquo;נולדתי במטבח. מאז לא יצאתי משם.&rdquo;
-          </p>
-          <cite className="block text-cream-warm/60 text-sm tracking-[0.25em] uppercase mt-10 not-italic">
-            — ספיר אלעזרא
-          </cite>
-          <Link
-            href="/about"
-            className="inline-flex items-center gap-3 text-cream-warm text-sm tracking-[0.18em] uppercase border-b border-cream-warm/40 pb-1 mt-10 hover:border-cream-warm transition-colors"
-          >
-            קראי את הסיפור המלא
-            <span className="text-lg">←</span>
-          </Link>
+        <div className="container mx-auto px-6 py-24 md:py-32">
+          <div className="grid md:grid-cols-12 gap-12 items-center max-w-6xl mx-auto">
+            <div className="md:col-span-5">
+              <div className="aspect-square overflow-hidden bg-ink/60 max-w-md mx-auto">
+                <Image
+                  src="/sapir/sapir-thinking.png"
+                  alt="ספיר רושמת מתכון"
+                  width={800}
+                  height={800}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+            <div className="md:col-span-7 text-center md:text-right">
+              <div className="ornament mb-8 md:justify-start" />
+              <p className="font-display italic text-3xl md:text-5xl leading-[1.15]">
+                &ldquo;סבתא מזל לימדה אותי שאוכל זה לא טכניקה.
+                <br />
+                אוכל זה יחס.&rdquo;
+              </p>
+              <cite className="block text-cream-warm/60 text-xs tracking-[0.25em] uppercase mt-8 not-italic">
+                ספיר אלעזרא
+              </cite>
+              <Link
+                href="/about"
+                className="inline-flex items-center gap-3 text-cream-warm text-sm tracking-[0.18em] uppercase border-b border-cream-warm/40 pb-1 mt-8 hover:border-cream-warm transition-colors"
+              >
+                קראי את הסיפור המלא
+                <span className="text-lg">←</span>
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 

@@ -48,19 +48,19 @@ export default function AboutPage() {
       {/* PORTRAIT */}
       <section className="bg-cream">
         <div className="container mx-auto px-6 py-12 md:py-20">
-          <figure className="max-w-4xl mx-auto fade-up">
-            <div className="aspect-[4/5] relative overflow-hidden bg-cream-dark img-vignette">
+          <figure className="max-w-2xl mx-auto fade-up">
+            <div className="aspect-[3/4] relative overflow-hidden bg-cream-dark">
               <Image
-                src="https://placehold.co/1200x1500?text=Sapir"
-                alt="ספיר אלעזרא"
+                src="/sapir/sapir-hero-portrait.png"
+                alt="ספיר אלעזרא במטבח הביתי שלה"
                 fill
-                sizes="(max-width: 1024px) 100vw, 1024px"
+                sizes="(max-width: 1024px) 100vw, 768px"
                 className="object-cover"
                 priority
               />
             </div>
             <figcaption className="mt-4 text-xs tracking-[0.22em] uppercase text-ink-muted text-center italic">
-              ספיר במטבח הביתי, חורף 2026
+              ספיר במטבח הביתי שלה, אביב 2026
             </figcaption>
           </figure>
         </div>
