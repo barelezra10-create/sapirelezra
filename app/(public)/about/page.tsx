@@ -3,16 +3,16 @@ import Link from "next/link";
 
 export const metadata = {
   title: "הסיפור של ספיר אלעזרא",
-  description: "שפית מקצועית, אמא, וחובבת אוכל שורשי. כל הסיפור.",
+  description: "בשלנית בנשמה. למדתי ממה שהכי חשוב, סבתא מזל. כל הסיפור.",
 };
 
 const MILESTONES: Array<{ year: string; text: string }> = [
-  { year: "1988", text: "נולדתי בתל אביב" },
-  { year: "2005", text: "שוליה ראשונה במטבח צרפתי בנווה צדק" },
-  { year: "2010", text: "לה קורדון בלו, פריז" },
-  { year: "2013", text: "שוליה במסעדת סושי בטוקיו" },
-  { year: "2017", text: "שפית במסעדת ביסטרו צרפתית בלונדון" },
-  { year: "2020", text: "חזרה לישראל, אמא ובלוגרית" },
+  { year: "1988", text: "נולדתי במטבח של סבתא מזל" },
+  { year: "1995", text: "הראשונה שטעמה כל מה שיוצא מהסירים" },
+  { year: "2003", text: "אפיתי את החלה הראשונה לבדי" },
+  { year: "2010", text: "התחלתי לרשום מתכונים על מפיות" },
+  { year: "2016", text: "פתחתי את הבלוג הראשון" },
+  { year: "2020", text: "אמא לראשונה. הקליטה האמיתית התחילה" },
   { year: "2026", text: "האתר הזה" },
 ];
 
@@ -38,7 +38,7 @@ export default function AboutPage() {
             </div>
             <div className="col-span-12 lg:col-span-3 fade-up" style={{ animationDelay: "260ms" }}>
               <p className="prose-sapir text-2xl leading-snug">
-                שפית, אמא, וחובבת אוכל שמסרבת לבחור צד.
+                בשלנית בנשמה. אמא בפועל. תלמידה של סבתא מזל.
               </p>
             </div>
           </div>
@@ -74,21 +74,20 @@ export default function AboutPage() {
 
             {/* First paragraph with Hebrew drop-cap */}
             <p className="text-lg md:text-xl leading-loose text-ink first-letter:font-display first-letter:text-7xl first-letter:text-burgundy first-letter:float-right first-letter:mr-0 first-letter:ml-3 first-letter:leading-none first-letter:mt-1">
-              נולדתי במטבח של סבתא ציפורה בשכונת התקווה בתל אביב. היא עלתה מקזבלנקה בשנות החמישים
-              עם שני סירי נחושת ומתכונים שאף אחד לא רשם אף פעם. הם היו בראש שלה, וכל ילדה שגדלה
-              בתור הבת השלישית הייתה צריכה ללמוד אותם בעיניים. ככה למדתי שתבשיל טוב מתחיל הרבה
-              לפני האש.
+              נולדתי במטבח של סבתא מזל. סבתא לא הלכה לבית ספר לבישול ולא קראה ספרי מתכונים. היא ידעה
+              את הכל מהבית של אמא שלה, ומאמא של אמא שלה לפניה. כל ילדה שגדלה לידה הייתה צריכה ללמוד
+              את המתכונים בעיניים ובידיים. ככה למדתי שתבשיל טוב מתחיל הרבה לפני האש.
             </p>
 
             <div className="mt-10 columns-1 md:columns-2 gap-12 text-lg leading-loose text-ink [&>p]:mb-6 [&>p]:break-inside-avoid">
               <p>
-                גיל 17 הצטרפתי למטבח של מסעדה צרפתית קטנה בנווה צדק. השף, ז&apos;אן-לוק, היה נורא
-                בעברית ומבריק בבישול. הוא לימד אותי לעבוד מהר, להיות נקייה, ולא לבזבז דבר. שלוש
-                שנים אחר כך הייתי בלה קורדון בלו בפריז.
+                לא הלכתי לאקדמיה לבישול. לא עשיתי שוליה במסעדה צרפתית. כל מה שאני יודעת, למדתי מסבתא
+                מזל ומכל הניסיונות שלי במטבח הביתי. שגיאות, הצלחות, מתכונים שלא יצאו, ואיטרציות עד
+                שיצאו.
               </p>
               <p>
-                אחרי פריז הלכתי ליפן. שנה במסעדת סושי קטנה בטוקיו, איפה שהשף הראשי אמר לי שלוש מילים
-                ביום ולא יותר. למדתי על שקט במטבח, על דיוק בחיתוכים, על אורז שמבושל באורך הנכון.
+                סבתא מזל לימדה אותי שאוכל הוא לא טכניקה, הוא יחס. איך מתייחסים לבצל, איך לעגבנייה,
+                איך למכינה שלך עם אמא של חברה שמראה לך משהו חדש. כל מה שיוצא מהמטבח שלי בא מהמקום הזה.
               </p>
             </div>
           </div>
@@ -100,8 +99,7 @@ export default function AboutPage() {
         <div className="container mx-auto px-6 py-24 md:py-32 text-center">
           <div className="ornament mb-10" />
           <p className="font-display italic text-3xl md:text-5xl leading-snug max-w-4xl mx-auto">
-            &ldquo;בלה קורדון בלו לימדו אותי טכניקה. במטבח של סבתא ציפורה למדתי נשמה.
-            הייתי צריכה את שניהם.&rdquo;
+            &ldquo;סבתא מזל לימדה אותי שאוכל זה לא טכניקה. אוכל זה יחס.&rdquo;
           </p>
           <cite className="block text-cream-warm/60 text-xs tracking-[0.25em] uppercase mt-10 not-italic">
             ספיר אלעזרא
@@ -117,14 +115,13 @@ export default function AboutPage() {
             <div className="section-num mb-10">פרק 02 · הבית</div>
             <div className="columns-1 md:columns-2 gap-12 text-lg leading-loose text-ink [&>p]:mb-6 [&>p]:break-inside-avoid">
               <p>
-                חזרתי לישראל ב-2020 כי רציתי להקים משפחה. היום אני אמא לשני ילדים, ספיר ויובל, ואני
-                מבשלת להם כל יום. כל מה שאני יודעת, מהמטבח של סבתא ציפורה ועד טוקיו, אני מנסה
-                להעביר. בלי קיצורי דרך אבל גם בלי להסתבך יותר ממה שצריך.
+                היום אני אמא ואני מבשלת לילדים שלי כל יום. מהר, פשוט, אבל עם שום פשרה על הטעם. כל מה
+                שלמדתי מסבתא מזל, אני מנסה להעביר. בלי קיצורי דרך אבל גם בלי להסתבך יותר ממה שצריך.
               </p>
               <p>
-                האתר הזה הוא הדבר הכי קרוב שאני יכולה לתת לך לישיבה במטבח שלי. מתכונים שעובדים,
-                טיפים שלמדתי בדם וזיעה, ולפעמים סיפור קטן מאחורי המנה. אם פתחת את הדלת, בואי, נבשל
-                יחד.
+                האתר הזה הוא הדבר הכי קרוב שאני יכולה לתת לך לישיבה במטבח שלי. מתכונים שעובדים בבית
+                האמיתי, טיפים שלמדתי משגיאות, ולפעמים סיפור קטן מאחורי המנה. אם פתחת את הדלת, בואי,
+                נבשל יחד.
               </p>
             </div>
           </div>
@@ -165,7 +162,7 @@ export default function AboutPage() {
         <div className="container mx-auto px-6 py-24 md:py-32 text-center">
           <p className="eyebrow eyebrow-cream mb-6">מסיימים את הפרק</p>
           <p className="font-display italic text-4xl md:text-6xl max-w-3xl mx-auto leading-tight">
-            השף שלך לרגעי הספק במטבח.
+            המטבח שלי, פתוח בשבילך.
           </p>
           <p className="text-cream-warm/80 mt-8 max-w-md mx-auto">
             עכשיו את יודעת מאיפה אני באה. בואי נבשל יחד.
