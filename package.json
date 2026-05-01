@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "db:seed": "tsx --env-file=.env prisma/seed.ts",
-    "build-targets": "tsx --env-file=.env scripts/build-targets.ts"
+    "build-targets": "tsx --env-file=.env scripts/build-targets.ts",
+    "generate-recipes": "tsx --env-file=.env scripts/generate-recipes.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1039.0",
