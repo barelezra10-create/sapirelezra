@@ -1,123 +1,128 @@
 import Link from "next/link";
 import { searchRecipes } from "@/lib/search";
+import { db } from "@/lib/db";
 import { RecipeCard } from "@/components/recipe-card";
+import { CategoryPill, colorForCategory } from "@/components/category-pill";
 
 export const metadata = {
   title: "חיפוש מתכון | ספיר אלעזרא",
-  description: "חפשו מתכון מתוך כל המתכונים שלי.",
+  description: "חפשו מתכון מתוך כל המתכונים של ספיר.",
 };
 
-const SEARCH_HINTS = ["שקשוקה", "חלה", "ילדים", "טאז'ין", "פסטה", "סבתא"];
+const SEARCH_HINTS = ["שקשוקה", "חלה", "ילדים", "פסטה", "סבתא", "טבעוני", "ללא גלוטן", "אפייה"];
 
-export default async function SearchPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
+export default async function SearchPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>;
+}) {
   const { q = "" } = await searchParams;
-  const results = q ? await searchRecipes(q) : [];
+  const [results, topCategories] = await Promise.all([
+    q ? searchRecipes(q) : Promise.resolve([]),
+    db.category.findMany({ where: { parentId: null }, orderBy: { order: "asc" } }),
+  ]);
 
   return (
     <main>
-      {/* HEADER — eyebrow + huge title + sapir prompt */}
-      <section className="border-b border-ink/10">
-        <div className="container mx-auto px-6 pt-16 pb-12 md:pt-24 md:pb-20">
-          <div className="flex items-center gap-3 mb-10 fade-up">
-            <span className="eyebrow eyebrow-burgundy">מחפשי השראה</span>
-            <span className="flex-1 h-px bg-ink/15 draw-line" />
+      {/* SEARCH HERO */}
+      <section className="bg-section-cream">
+        <div className="container mx-auto px-6 pt-14 pb-10 md:pt-20 md:pb-14">
+          <div className="max-w-3xl mx-auto text-center fade-up">
+            <span className="chip chip-tomato mb-5">חיפוש</span>
+            <h1 className="h-display text-ink mt-4">מה מתחשק היום?</h1>
+            <p className="voice-sapir text-xl md:text-2xl mt-5">
+              חפשי לפי שם, מצרך או רעיון.
+            </p>
           </div>
-          <div className="grid grid-cols-12 gap-8 md:gap-12 items-end">
-            <div className="col-span-12 lg:col-span-7 fade-up" style={{ animationDelay: "120ms" }}>
-              <h1 className="section-title text-ink">חפשי משהו</h1>
-            </div>
-            <div className="col-span-12 lg:col-span-5 fade-up" style={{ animationDelay: "240ms" }}>
-              <p className="prose-sapir text-2xl md:text-3xl leading-snug">
-                מה את רוצה לבשל היום?
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* SEARCH FORM — large serif input with thick burgundy underline */}
-      <section className="border-b border-ink/10 bg-cream">
-        <div className="container mx-auto px-6 py-16 md:py-20">
-          <form className="max-w-3xl mx-auto">
-            <label className="block">
-              <span className="eyebrow eyebrow-burgundy block mb-4">מילת חיפוש</span>
+          <form action="/search" method="GET" className="max-w-3xl mx-auto mt-10">
+            <label className="sr-only" htmlFor="search-input">חיפוש</label>
+            <div className="relative">
               <input
+                id="search-input"
+                type="search"
                 name="q"
                 defaultValue={q}
                 placeholder="שקשוקה, חלה, מנה לילדים..."
                 autoFocus
-                className="font-display w-full text-3xl md:text-5xl bg-transparent border-b-2 border-burgundy py-4 focus:outline-none focus:border-burgundy-deep placeholder:text-ink-muted/50 placeholder:font-display"
+                className="search-input search-input-large pe-16"
               />
-            </label>
+              <button
+                type="submit"
+                className="absolute end-2 top-1/2 -translate-y-1/2 btn-primary !py-3 !px-5"
+                aria-label="חפש"
+              >
+                חפשי
+              </button>
+            </div>
           </form>
 
           {/* Hints */}
-          <div className="max-w-3xl mx-auto mt-10 flex flex-wrap items-center gap-3">
-            <span className="text-xs tracking-[0.22em] uppercase text-ink-muted me-2">
-              נסי
-            </span>
+          <div className="max-w-3xl mx-auto mt-7 flex flex-wrap items-center justify-center gap-2">
+            <span className="text-xs text-ink-muted me-2 font-semibold tracking-wider uppercase">נסי</span>
             {SEARCH_HINTS.map((h) => (
               <Link
                 key={h}
                 href={`/search?q=${encodeURIComponent(h)}`}
-                className="font-display italic text-burgundy text-lg border-b border-burgundy/40 hover:border-burgundy transition-colors"
+                className="chip chip-cream hover:chip-tomato transition-colors"
               >
                 {h}
               </Link>
+            ))}
+          </div>
+
+          {/* Top categories */}
+          <div className="max-w-3xl mx-auto mt-10 flex flex-wrap items-center justify-center gap-2">
+            <span className="text-xs text-ink-muted me-2 font-semibold tracking-wider uppercase">פרקים</span>
+            {topCategories.map((c) => (
+              <CategoryPill
+                key={c.id}
+                href={`/categories/${encodeURIComponent(c.slug)}`}
+                label={c.name}
+                color={colorForCategory(c.slug)}
+                size="pill"
+              />
             ))}
           </div>
         </div>
       </section>
 
       {/* RESULTS */}
-      <section className="border-b border-ink/10">
-        <div className="container mx-auto px-6 py-24 md:py-32">
+      <section className="bg-cream-warm">
+        <div className="container mx-auto px-6 py-14 md:py-20">
           {q ? (
             results.length > 0 ? (
               <>
-                <div className="flex items-baseline justify-between flex-wrap gap-6 mb-16">
+                <div className="flex items-end justify-between flex-wrap gap-3 mb-8">
                   <div>
-                    <div className="section-num mb-3">תוצאות</div>
-                    <h2 className="section-title">
-                      &ldquo;{q}&rdquo;
-                    </h2>
+                    <span className="eyebrow eyebrow-burgundy">תוצאות עבור</span>
+                    <h2 className="h-section mt-1">&ldquo;{q}&rdquo;</h2>
                   </div>
-                  <p className="text-ink-muted text-sm tracking-[0.18em] uppercase">
-                    {results.length} מתכונים
-                  </p>
+                  <span className="chip chip-tomato">{results.length} מתכונים</span>
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-12">
-                  {results.map((r, i) => (
-                    <RecipeCard key={r.id} recipe={r} index={i} />
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-4 gap-y-8">
+                  {results.map((r) => (
+                    <RecipeCard key={r.id} recipe={r} />
                   ))}
                 </div>
               </>
             ) : (
-              <div className="max-w-2xl mx-auto text-center py-16">
-                <div className="ornament mb-10" />
-                <p className="font-display italic text-3xl md:text-4xl leading-snug text-ink">
+              <div className="max-w-xl mx-auto text-center py-12">
+                <span className="chip chip-cream mb-6">אין תוצאות</span>
+                <p className="h-bold text-2xl md:text-3xl mt-3">
                   לא מצאתי מתכון עבור &ldquo;{q}&rdquo;.
                 </p>
-                <p className="text-ink-muted mt-6 leading-relaxed">
-                  נסי משהו אחר, או דפדפי בקטגוריות. אני כל הזמן מוסיפה.
+                <p className="text-ink-muted mt-4 leading-relaxed">
+                  נסי משהו אחר או דפדפי בקטגוריות. אני כל הזמן מוסיפה.
                 </p>
-                <Link
-                  href="/"
-                  className="inline-flex items-center gap-3 text-burgundy text-sm tracking-[0.18em] uppercase border-b border-burgundy pb-1 mt-10 hover:gap-5 transition-all"
-                >
-                  חזרי לעמוד הבית
-                  <span className="text-lg">←</span>
-                </Link>
-                <div className="ornament mt-10" />
+                <Link href="/" className="btn-primary mt-8">חזרי לעמוד הבית</Link>
               </div>
             )
           ) : (
-            <div className="max-w-2xl mx-auto text-center py-12">
-              <div className="ornament mb-10" />
-              <p className="font-display italic text-2xl md:text-3xl leading-snug text-ink-muted">
+            <div className="max-w-xl mx-auto text-center py-10">
+              <p className="voice-sapir text-2xl md:text-3xl">
                 הקלידי משהו למעלה ואני אמצא לך.
               </p>
-              <div className="ornament mt-10" />
             </div>
           )}
         </div>

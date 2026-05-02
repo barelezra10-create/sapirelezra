@@ -7,33 +7,51 @@ type Recipe = {
   heroImage: string;
   subtitle?: string | null;
   totalTimeMin: number;
+  difficulty?: string;
 };
 
-export function RecipeCard({ recipe, index }: { recipe: Recipe; index?: number }) {
+function diffLabel(d?: string) {
+  if (!d) return null;
+  return ({ EASY: "קל", MEDIUM: "בינוני", HARD: "מתקדם" } as Record<string, string>)[d] ?? d;
+}
+
+export function RecipeCard({ recipe }: { recipe: Recipe; index?: number }) {
   return (
-    <Link href={`/recipes/${encodeURIComponent(recipe.slug)}`} className="group block">
-      <div className="aspect-[4/5] overflow-hidden bg-cream-dark relative">
+    <Link
+      href={`/recipes/${encodeURIComponent(recipe.slug)}`}
+      className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-burgundy rounded-xl"
+    >
+      <div className="aspect-[4/3] overflow-hidden bg-cream-dark relative rounded-xl">
         <Image
           src={recipe.heroImage}
           alt={recipe.title}
           width={600}
-          height={750}
+          height={450}
           className="img-hover w-full h-full object-cover"
         />
-        {typeof index === "number" && (
-          <span className="absolute top-3 right-3 text-cream-warm font-display italic text-xs tracking-wider bg-burgundy/90 backdrop-blur px-2 py-0.5">
-            {String(index + 1).padStart(2, "0")}
-          </span>
+        {/* Time badge · top corner */}
+        <span className="absolute top-2 start-2 chip chip-cream backdrop-blur-sm bg-cream-warm/90">
+          {recipe.totalTimeMin} דק׳
+        </span>
+        {/* Hover dark overlay reveals subtitle */}
+        <div className="card-overlay rounded-xl" />
+        {recipe.subtitle && (
+          <div className="card-subtitle-slide line-clamp-3">{recipe.subtitle}</div>
         )}
       </div>
-      <div className="mt-4 space-y-1.5">
-        <div className="flex items-center gap-2 text-[11px] tracking-[0.18em] uppercase text-ink-muted">
-          <span>{recipe.totalTimeMin} דק׳</span>
+      <div className="mt-3 space-y-1.5">
+        <h3 className="card-title font-body font-bold text-base md:text-lg leading-snug text-ink">
+          {recipe.title}
+        </h3>
+        <div className="flex items-center gap-2 text-[11px] text-ink-muted">
+          {diffLabel(recipe.difficulty) && (
+            <>
+              <span>{diffLabel(recipe.difficulty)}</span>
+              <span className="opacity-40">·</span>
+            </>
+          )}
+          <span>{recipe.totalTimeMin} דקות</span>
         </div>
-        <h3 className="card-title font-display text-2xl leading-tight">{recipe.title}</h3>
-        {recipe.subtitle && (
-          <p className="text-sm text-ink-muted leading-snug pt-0.5 line-clamp-2">{recipe.subtitle}</p>
-        )}
       </div>
     </Link>
   );
@@ -41,23 +59,33 @@ export function RecipeCard({ recipe, index }: { recipe: Recipe; index?: number }
 
 export function RecipeCardLarge({ recipe }: { recipe: Recipe }) {
   return (
-    <Link href={`/recipes/${encodeURIComponent(recipe.slug)}`} className="group block">
-      <div className="aspect-[3/4] md:aspect-[4/5] overflow-hidden bg-cream-dark relative">
+    <Link
+      href={`/recipes/${encodeURIComponent(recipe.slug)}`}
+      className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-burgundy rounded-2xl"
+    >
+      <div className="aspect-[16/10] overflow-hidden bg-cream-dark relative rounded-2xl img-vignette">
         <Image
           src={recipe.heroImage}
           alt={recipe.title}
-          width={1200}
-          height={1500}
+          width={1400}
+          height={875}
           className="img-hover w-full h-full object-cover"
           priority
         />
-      </div>
-      <div className="mt-5 space-y-2">
-        <div className="text-[11px] tracking-[0.2em] uppercase text-ink-muted">
-          {recipe.totalTimeMin} דקות הכנה
+        <div className="absolute inset-x-0 bottom-0 p-6 md:p-8 z-10">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="chip chip-tomato">מתכון השבוע</span>
+            <span className="chip chip-cream">{recipe.totalTimeMin} דק׳</span>
+          </div>
+          <h3 className="font-body font-black text-cream-warm text-3xl md:text-5xl leading-tight tracking-tight">
+            {recipe.title}
+          </h3>
+          {recipe.subtitle && (
+            <p className="text-cream-warm/85 mt-2 text-sm md:text-base max-w-xl">
+              {recipe.subtitle}
+            </p>
+          )}
         </div>
-        <h3 className="card-title font-display text-3xl md:text-4xl leading-tight">{recipe.title}</h3>
-        {recipe.subtitle && <p className="text-base text-ink-muted">{recipe.subtitle}</p>}
       </div>
     </Link>
   );

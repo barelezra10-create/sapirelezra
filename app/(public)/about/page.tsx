@@ -19,61 +19,50 @@ const MILESTONES: Array<{ year: string; text: string }> = [
 export default function AboutPage() {
   return (
     <main>
-      {/* COVER — eyebrow + huge title + tagline */}
-      <section className="border-b border-ink/10">
-        <div className="container mx-auto px-6 pt-16 pb-12 md:pt-24 md:pb-20">
-          <div className="flex items-center gap-3 mb-12 fade-up">
-            <span className="eyebrow eyebrow-burgundy">פרק על · הסיפור של ספיר</span>
-            <span className="flex-1 h-px bg-ink/15 draw-line" />
-          </div>
-          <div className="grid grid-cols-12 gap-8 md:gap-12 items-end">
-            <div className="col-span-12 lg:col-span-9 fade-up" style={{ animationDelay: "120ms" }}>
-              <h1 className="hero-title text-ink">
+      {/* COVER · bold headline + portrait side by side */}
+      <section className="bg-cream-warm">
+        <div className="container mx-auto px-6 pt-12 pb-10 md:pt-20 md:pb-16">
+          <div className="grid grid-cols-12 gap-8 md:gap-12 items-center">
+            <div className="col-span-12 lg:col-span-7 fade-up">
+              <span className="chip chip-tomato mb-5">הסיפור של ספיר</span>
+              <h1 className="h-display text-ink mt-4">
                 שלום,
                 <br />
-                <em className="text-burgundy not-italic font-display" style={{ fontStyle: "italic" }}>
-                  אני ספיר.
-                </em>
+                <span className="voice-sapir not-italic" style={{ fontStyle: "italic" }}>אני ספיר.</span>
               </h1>
-            </div>
-            <div className="col-span-12 lg:col-span-3 fade-up" style={{ animationDelay: "260ms" }}>
-              <p className="prose-sapir text-2xl leading-snug">
+              <p className="voice-sapir text-2xl md:text-3xl leading-snug mt-7 max-w-xl">
                 בשלנית בנשמה. אמא בפועל. תלמידה של סבתא מזל, עם נטייה לקליל יותר כשאפשר.
               </p>
             </div>
+            <div className="col-span-12 lg:col-span-5 fade-up" style={{ animationDelay: "120ms" }}>
+              <figure>
+                <div className="aspect-[3/4] relative overflow-hidden bg-cream-dark rounded-2xl">
+                  <Image
+                    src="/sapir/sapir-hero-portrait.png"
+                    alt="ספיר אלעזרא במטבח הביתי שלה"
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 600px"
+                    className="object-cover"
+                    priority
+                  />
+                </div>
+                <figcaption className="mt-3 text-xs tracking-[0.22em] uppercase text-ink-muted text-center">
+                  במטבח הביתי, אביב 2026
+                </figcaption>
+              </figure>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* PORTRAIT */}
-      <section className="bg-cream">
-        <div className="container mx-auto px-6 py-12 md:py-20">
-          <figure className="max-w-2xl mx-auto fade-up">
-            <div className="aspect-[3/4] relative overflow-hidden bg-cream-dark">
-              <Image
-                src="/sapir/sapir-hero-portrait.png"
-                alt="ספיר אלעזרא במטבח הביתי שלה"
-                fill
-                sizes="(max-width: 1024px) 100vw, 768px"
-                className="object-cover"
-                priority
-              />
-            </div>
-            <figcaption className="mt-4 text-xs tracking-[0.22em] uppercase text-ink-muted text-center italic">
-              ספיר במטבח הביתי שלה, אביב 2026
-            </figcaption>
-          </figure>
-        </div>
-      </section>
-
-      {/* BODY — long-read, 2-col on desktop */}
-      <section className="border-b border-ink/10">
-        <div className="container mx-auto px-6 py-24 md:py-32">
+      {/* BODY · the start */}
+      <section className="bg-section-cream border-t border-ink/10">
+        <div className="container mx-auto px-6 py-16 md:py-24">
           <div className="max-w-4xl mx-auto">
-            <div className="section-num mb-10">פרק 01 · ההתחלה</div>
+            <span className="eyebrow eyebrow-burgundy mb-4">פרק 01 · ההתחלה</span>
+            <h2 className="h-section mt-2 mb-8">איך זה התחיל</h2>
 
-            {/* First paragraph with Hebrew drop-cap */}
-            <p className="text-lg md:text-xl leading-loose text-ink first-letter:font-display first-letter:text-7xl first-letter:text-burgundy first-letter:float-right first-letter:mr-0 first-letter:ml-3 first-letter:leading-none first-letter:mt-1">
+            <p className="text-lg md:text-xl leading-loose text-ink first-letter:font-body first-letter:font-black first-letter:text-7xl first-letter:text-burgundy first-letter:float-right first-letter:mr-0 first-letter:ml-3 first-letter:leading-none first-letter:mt-1">
               נולדתי במטבח של סבתא מזל. סבתא לא הלכה לבית ספר לבישול ולא קראה ספרי מתכונים. היא ידעה
               את הכל מהבית של אמא שלה, ומאמא של אמא שלה לפניה. כל ילדה שגדלה לידה הייתה צריכה ללמוד
               את המתכונים בעיניים ובידיים. ככה למדתי שתבשיל טוב מתחיל הרבה לפני האש.
@@ -94,25 +83,24 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* PULL QUOTE — ink background */}
-      <section className="bg-ink text-cream-warm">
-        <div className="container mx-auto px-6 py-24 md:py-32 text-center">
-          <div className="ornament mb-10" />
-          <p className="font-display italic text-3xl md:text-5xl leading-snug max-w-4xl mx-auto">
+      {/* PULL QUOTE · ink */}
+      <section className="bg-section-ink">
+        <div className="container mx-auto px-6 py-20 md:py-28 text-center">
+          <p className="voice-sapir text-3xl md:text-5xl leading-tight max-w-4xl mx-auto" style={{ color: "var(--color-cream-warm)" }}>
             &ldquo;סבתא מזל לימדה אותי שאוכל זה לא טכניקה. אוכל זה יחס.&rdquo;
           </p>
-          <cite className="block text-cream-warm/60 text-xs tracking-[0.25em] uppercase mt-10 not-italic">
+          <span className="block text-cream-warm/60 text-xs tracking-[0.25em] uppercase mt-8">
             ספיר אלעזרא
-          </cite>
-          <div className="ornament mt-10" />
+          </span>
         </div>
       </section>
 
-      {/* BODY — continuation */}
-      <section className="border-b border-ink/10 bg-cream">
-        <div className="container mx-auto px-6 py-24 md:py-32">
+      {/* BODY · continuation */}
+      <section className="bg-cream-warm">
+        <div className="container mx-auto px-6 py-16 md:py-24">
           <div className="max-w-4xl mx-auto">
-            <div className="section-num mb-10">פרק 02 · הבית</div>
+            <span className="eyebrow eyebrow-burgundy mb-4">פרק 02 · הבית</span>
+            <h2 className="h-section mt-2 mb-8">היום, אצלי</h2>
             <div className="columns-1 md:columns-2 gap-12 text-lg leading-loose text-ink [&>p]:mb-6 [&>p]:break-inside-avoid">
               <p>
                 היום אני אמא ואני מבשלת לילדים שלי כל יום. מהר, פשוט, אבל עם שום פשרה על הטעם. כל מה
@@ -129,24 +117,24 @@ export default function AboutPage() {
       </section>
 
       {/* MILESTONES */}
-      <section className="border-b border-ink/10">
-        <div className="container mx-auto px-6 py-24 md:py-32">
-          <div className="grid grid-cols-12 gap-8 md:gap-16">
+      <section className="bg-section-marigold">
+        <div className="container mx-auto px-6 py-16 md:py-24">
+          <div className="grid grid-cols-12 gap-8 md:gap-12">
             <div className="col-span-12 md:col-span-4">
-              <div className="section-num mb-3">פרק 03 · הציר זמן</div>
-              <h2 className="section-title">איך הגעתי לכאן</h2>
+              <span className="eyebrow">ציר זמן</span>
+              <h2 className="h-section mt-2">איך הגעתי לכאן</h2>
             </div>
             <div className="col-span-12 md:col-span-8">
-              <ol className="divide-y divide-ink/10">
+              <ol className="divide-y divide-ink/15">
                 {MILESTONES.map((m) => (
                   <li
                     key={m.year}
-                    className="grid grid-cols-12 gap-6 py-6 items-baseline"
+                    className="grid grid-cols-12 gap-6 py-5 items-baseline"
                   >
-                    <span className="col-span-3 md:col-span-2 font-display italic text-2xl md:text-3xl text-burgundy">
+                    <span className="col-span-3 md:col-span-2 font-body font-black text-2xl md:text-3xl text-ink leading-none">
                       {m.year}
                     </span>
-                    <span className="col-span-9 md:col-span-10 font-display text-xl md:text-2xl leading-snug text-ink">
+                    <span className="col-span-9 md:col-span-10 font-body text-lg md:text-xl leading-snug text-ink">
                       {m.text}
                     </span>
                   </li>
@@ -157,23 +145,24 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* CLOSING CTA — burgundy */}
-      <section className="bg-burgundy text-cream-warm">
-        <div className="container mx-auto px-6 py-24 md:py-32 text-center">
-          <p className="eyebrow eyebrow-cream mb-6">מסיימים את הפרק</p>
-          <p className="font-display italic text-4xl md:text-6xl max-w-3xl mx-auto leading-tight">
+      {/* CLOSING CTA */}
+      <section className="bg-section-tomato">
+        <div className="container mx-auto px-6 py-20 md:py-28 text-center">
+          <span className="eyebrow eyebrow-cream mb-5">מסיימים את הפרק</span>
+          <h2 className="h-section mt-3" style={{ color: "var(--color-cream-warm)" }}>
             המטבח שלי, פתוח בשבילך.
-          </p>
-          <p className="text-cream-warm/80 mt-8 max-w-md mx-auto">
+          </h2>
+          <p className="text-cream-warm/85 mt-6 max-w-md mx-auto">
             עכשיו את יודעת מאיפה אני באה. בואי נבשל יחד.
           </p>
-          <Link
-            href="/"
-            className="inline-flex items-center gap-3 text-cream-warm text-sm tracking-[0.18em] uppercase border-b border-cream-warm/40 pb-1 mt-10 hover:border-cream-warm transition-colors"
-          >
-            לכל המתכונים
-            <span className="text-lg">←</span>
-          </Link>
+          <div className="mt-8 flex items-center justify-center gap-3 flex-wrap">
+            <Link href="/" className="btn-primary bg-cream-warm text-ink border-cream-warm hover:bg-cream">
+              לכל המתכונים
+            </Link>
+            <Link href="/search" className="btn-ghost text-cream-warm border-cream-warm hover:bg-cream-warm hover:text-ink">
+              חיפוש מתכון
+            </Link>
+          </div>
         </div>
       </section>
     </main>

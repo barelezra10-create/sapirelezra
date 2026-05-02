@@ -2,8 +2,18 @@ import Link from "next/link";
 import Image from "next/image";
 import { db } from "@/lib/db";
 import { RecipeCard, RecipeCardLarge } from "@/components/recipe-card";
+import { CategoryPill, colorForCategory } from "@/components/category-pill";
 
 export const dynamic = "force-dynamic";
+
+const CATEGORY_TONE: Record<string, string> = {
+  "for-kids": "bg-section-marigold",
+  baking: "bg-section-saffron",
+  "grandma-cuisines": "bg-section-tomato",
+  "world-cuisines": "bg-section-olive",
+  "israeli-everyday": "bg-section-marigold",
+  "by-diet": "bg-section-pistachio",
+};
 
 export default async function Home() {
   const [allPublished, topCategoriesRaw, totalCount] = await Promise.all([
@@ -53,262 +63,182 @@ export default async function Home() {
 
   return (
     <main>
-      {/* HERO — asymmetric magazine spread */}
-      <section className="border-b border-ink/10">
-        <div className="container mx-auto px-6 py-16 md:py-24">
-          <div className="flex items-center gap-3 mb-12 fade-up" style={{ animationDelay: "0ms" }}>
-            <span className="eyebrow eyebrow-burgundy">פתח גיליון · אביב 2026</span>
-            <span className="flex-1 h-px bg-ink/15 draw-line" />
-          </div>
-          <div className="grid grid-cols-12 gap-8 md:gap-12 items-end">
-            <div className="col-span-12 lg:col-span-8 fade-up" style={{ animationDelay: "120ms" }}>
-              <h1 className="hero-title text-ink">
+      {/* HERO · bold modern, image + headline */}
+      <section className="relative">
+        <div className="container mx-auto px-6 pt-8 md:pt-14 pb-12 md:pb-20">
+          <div className="grid grid-cols-12 gap-6 md:gap-10 items-stretch">
+            {/* Headline column */}
+            <div className="col-span-12 lg:col-span-6 flex flex-col justify-center order-2 lg:order-1 fade-up">
+              <div className="flex items-center gap-2 mb-5">
+                <span className="chip chip-tomato">חדש כל שבוע</span>
+                <span className="chip chip-cream">{totalCount}+ מתכונים</span>
+              </div>
+              <h1 className="h-display text-ink">
                 המטבח שלי,
                 <br />
-                <em className="text-burgundy not-italic font-display" style={{ fontStyle: "italic" }}>
-                  פתוח בשבילך.
-                </em>
+                <span className="voice-sapir not-italic" style={{ fontStyle: "italic" }}>פתוח בשבילך.</span>
               </h1>
-              <div className="mt-12 max-w-xl space-y-6">
-                <p className="prose-sapir text-2xl md:text-3xl leading-snug">
-                  בשלנית בנשמה. אמא בפועל. תלמידה של סבתא מזל.
-                </p>
-                <p className="text-base md:text-lg text-ink/80 leading-relaxed">
-                  למדתי לבשל אצל סבתא מזל. בלי תעודות, בלי בתי ספר. ידיים, עיניים וטעם.
-                  כאן אני אורזת לך את כל מה שלמדתי ממנה, עם נטייה למצרכים טריים וגרסאות
-                  קלות יותר כשאפשר. בלי להטיף, פשוט להציע.
-                </p>
-                <Link
-                  href="/about"
-                  className="inline-flex items-center gap-3 text-burgundy text-sm tracking-[0.18em] uppercase border-b border-burgundy pb-1 hover:gap-5 transition-all"
-                >
-                  קראי את הסיפור שלי
-                  <span className="text-lg">←</span>
+              <p className="voice-sapir text-xl md:text-2xl leading-snug mt-7 max-w-lg">
+                בשלנית בנשמה. אמא בפועל. תלמידה של סבתא מזל.
+              </p>
+              <p className="text-base md:text-lg text-ink/80 leading-relaxed mt-4 max-w-lg">
+                כאן את מוצאת מתכונים שעובדים בבית. עם נטייה לטרי, גרסאות קלילות יותר כשאפשר,
+                ובלי להסתבך.
+              </p>
+              <div className="flex flex-wrap items-center gap-3 mt-8">
+                <Link href="/search" className="btn-primary">
+                  גלי מתכון
+                  <span aria-hidden>←</span>
+                </Link>
+                <Link href="/about" className="btn-ghost">
+                  הסיפור של ספיר
                 </Link>
               </div>
             </div>
 
-            {/* Sapir illustration — establishes the persona visually */}
-            <div className="col-span-12 lg:col-span-4 fade-up" style={{ animationDelay: "300ms" }}>
-              <figure>
-                <div className="relative">
-                  <span className="absolute -top-3 right-4 z-10 bg-burgundy text-cream-warm text-[10px] tracking-[0.25em] uppercase px-3 py-1.5">
-                    הכירי את ספיר
-                  </span>
-                  <div className="aspect-[3/4] overflow-hidden bg-cream-dark">
-                    <Image
-                      src="/sapir/sapir-hero-portrait.png"
-                      alt="ספיר אלעזרא במטבח שלה"
-                      width={800}
-                      height={1066}
-                      className="w-full h-full object-cover"
-                      priority
-                    />
-                  </div>
-                </div>
-                <figcaption className="mt-4 text-[11px] tracking-[0.2em] uppercase text-ink-muted text-center">
-                  ספיר במטבח הביתי שלה
-                </figcaption>
-              </figure>
+            {/* Feature recipe card */}
+            <div className="col-span-12 lg:col-span-6 order-1 lg:order-2 fade-up" style={{ animationDelay: "120ms" }}>
+              {weekFeature ? (
+                <RecipeCardLarge recipe={weekFeature} />
+              ) : (
+                <div className="aspect-[16/10] rounded-2xl bg-cream-dark" />
+              )}
             </div>
           </div>
         </div>
       </section>
 
-      {/* CHAPTER 01 — RECIPE OF THE WEEK */}
-      {weekFeature && (
-        <section className="border-b border-ink/10 bg-cream">
-          <div className="container mx-auto px-6 py-24 md:py-32">
-            <div className="grid grid-cols-12 gap-8 md:gap-16 items-center">
-              <div className="col-span-12 md:col-span-7">
-                <Link href={`/recipes/${encodeURIComponent(weekFeature.slug)}`} className="group block">
-                  <div className="aspect-[5/4] overflow-hidden bg-cream-dark">
-                    <Image
-                      src={weekFeature.heroImage}
-                      alt={weekFeature.title}
-                      width={1400}
-                      height={1120}
-                      className="img-hover w-full h-full object-cover"
-                    />
+      {/* CHAPTERS · colored chip cards */}
+      <section className="bg-cream-warm">
+        <div className="container mx-auto px-6 pb-12 md:pb-16">
+          <div className="flex items-end justify-between flex-wrap gap-4 mb-6">
+            <div>
+              <span className="eyebrow eyebrow-burgundy mb-2">פרקים</span>
+              <h2 className="h-section text-ink mt-1">בחרי על מה את במצב</h2>
+            </div>
+            <p className="text-ink-muted max-w-md text-sm">
+              שש קטגוריות, מאות מתכונים. דפדפי או חפשי משהו ספציפי.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {categoriesWithCounts.map((c) => {
+              const color = colorForCategory(c.slug);
+              const tone = CATEGORY_TONE[c.slug] ?? "bg-section-ink";
+              return (
+                <Link
+                  key={c.id}
+                  href={`/categories/${encodeURIComponent(c.slug)}`}
+                  className={`group block rounded-2xl p-7 md:p-8 ${tone} transition-transform duration-300 hover:-translate-y-1 hover:shadow-xl`}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <h3 className="font-body font-black text-2xl md:text-3xl leading-tight tracking-tight">
+                      {c.name}
+                    </h3>
+                    <span className="text-2xl opacity-50 group-hover:opacity-100 transition-opacity">
+                      ←
+                    </span>
+                  </div>
+                  <div className="mt-6 flex items-center justify-between text-sm font-semibold opacity-90">
+                    <span>{c.totalRecipes} מתכונים</span>
+                    <span className="text-xs uppercase tracking-widest opacity-70">
+                      {color}
+                    </span>
                   </div>
                 </Link>
-              </div>
-              <div className="col-span-12 md:col-span-5 space-y-6">
-                <div className="section-num">פרק 01 · מתכון השבוע</div>
-                <h2 className="section-title text-ink">
-                  <Link
-                    href={`/recipes/${encodeURIComponent(weekFeature.slug)}`}
-                    className="hover:text-burgundy transition-colors"
-                  >
-                    {weekFeature.title}
-                  </Link>
-                </h2>
-                {weekFeature.subtitle && (
-                  <p className="prose-sapir text-xl leading-snug">{weekFeature.subtitle}</p>
-                )}
-                <p className="text-ink/75 leading-relaxed">{weekFeature.sapirIntro}</p>
-                <dl className="grid grid-cols-3 gap-6 pt-6 border-t border-ink/10 text-sm">
-                  <Stat label="הכנה" value={`${weekFeature.prepTimeMin} דק׳`} />
-                  <Stat label="בישול" value={`${weekFeature.cookTimeMin} דק׳`} />
-                  <Stat label="רמה" value={diffLabel(weekFeature.difficulty)} />
-                </dl>
-                <Link
-                  href={`/recipes/${encodeURIComponent(weekFeature.slug)}`}
-                  className="inline-flex items-center gap-3 text-burgundy text-sm tracking-[0.18em] uppercase border-b border-burgundy pb-1 hover:gap-5 transition-all"
-                >
-                  קראי את המתכון
-                  <span className="text-lg">←</span>
-                </Link>
-              </div>
-            </div>
+              );
+            })}
           </div>
-        </section>
-      )}
+        </div>
+      </section>
 
-      {/* PULL QUOTE — Sapir at her desk */}
-      <section className="bg-ink text-cream-warm">
-        <div className="container mx-auto px-6 py-24 md:py-32">
-          <div className="grid md:grid-cols-12 gap-12 items-center max-w-6xl mx-auto">
-            <div className="md:col-span-5">
-              <div className="aspect-square overflow-hidden bg-ink/60 max-w-md mx-auto">
+      {/* SAPIR INTRO · secondary, smaller */}
+      <section className="bg-section-ink">
+        <div className="container mx-auto px-6 py-16 md:py-24">
+          <div className="grid md:grid-cols-12 gap-10 items-center max-w-6xl mx-auto">
+            <div className="md:col-span-4">
+              <div className="aspect-square overflow-hidden rounded-2xl bg-ink/60 max-w-xs mx-auto">
                 <Image
                   src="/sapir/sapir-thinking.png"
                   alt="ספיר רושמת מתכון"
-                  width={800}
-                  height={800}
+                  width={600}
+                  height={600}
                   className="w-full h-full object-cover"
                 />
               </div>
             </div>
-            <div className="md:col-span-7 text-center md:text-right">
-              <div className="ornament mb-8 md:justify-start" />
-              <p className="font-display italic text-3xl md:text-5xl leading-[1.15]">
-                &ldquo;סבתא מזל לימדה אותי שאוכל זה לא טכניקה.
-                <br />
-                אוכל זה יחס.&rdquo;
+            <div className="md:col-span-8 text-center md:text-right">
+              <span className="chip chip-cream mb-5">מילה אישית</span>
+              <p className="voice-sapir text-2xl md:text-4xl leading-tight text-cream-warm" style={{ color: "var(--color-cream-warm)" }}>
+                &ldquo;סבתא מזל לימדה אותי שאוכל זה לא טכניקה. אוכל זה יחס.&rdquo;
               </p>
-              <cite className="block text-cream-warm/60 text-xs tracking-[0.25em] uppercase mt-8 not-italic">
-                ספיר אלעזרא
-              </cite>
-              <Link
-                href="/about"
-                className="inline-flex items-center gap-3 text-cream-warm text-sm tracking-[0.18em] uppercase border-b border-cream-warm/40 pb-1 mt-8 hover:border-cream-warm transition-colors"
-              >
-                קראי את הסיפור המלא
-                <span className="text-lg">←</span>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CHAPTER 02 — CHAPTERS / CATEGORIES */}
-      <section className="border-b border-ink/10">
-        <div className="container mx-auto px-6 py-24 md:py-32">
-          <div className="flex items-baseline justify-between flex-wrap gap-6 mb-16">
-            <div>
-              <div className="section-num mb-3">פרק 02</div>
-              <h2 className="section-title">בחרי את הפרק שלך</h2>
-            </div>
-            <p className="text-ink-muted max-w-md">
-              שש קטגוריות, מאות מתכונים. מאוכל ראשון לתינוק ועד פסטה איטלקית. הכל עם דגש
-              על מצרכים טריים ואופציות קלילות יותר כשאפשר.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-ink/10">
-            {categoriesWithCounts.map((c, i) => (
-              <Link
-                key={c.id}
-                href={`/categories/${encodeURIComponent(c.slug)}`}
-                className="group bg-cream-warm hover:bg-cream transition-colors p-10 md:p-12 relative"
-              >
-                <div className="flex items-baseline justify-between">
-                  <span className="drop-num opacity-30 group-hover:opacity-100 transition-opacity">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <span className="text-xs tracking-[0.2em] uppercase text-ink-muted">
-                    {c.totalRecipes} מתכונים
-                  </span>
-                </div>
-                <h3 className="font-display text-3xl md:text-5xl mt-8 leading-none group-hover:text-burgundy transition-colors">
-                  {c.name}
-                </h3>
-                <span className="absolute bottom-6 left-10 md:left-12 text-burgundy opacity-0 group-hover:opacity-100 transition-opacity text-2xl">
-                  ←
-                </span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CHAPTER 03 — RECENT RECIPES (12-up grid) */}
-      {recentSlice.length > 0 && (
-        <section className="border-b border-ink/10 bg-cream">
-          <div className="container mx-auto px-6 py-24 md:py-32">
-            <div className="flex items-baseline justify-between flex-wrap gap-6 mb-16">
-              <div>
-                <div className="section-num mb-3">פרק 03</div>
-                <h2 className="section-title">הכי טריים אצלי</h2>
-                <p className="text-ink-muted mt-4 max-w-md">
-                  {totalCount} מתכונים בארכיון, וזה רק ההתחלה.
-                </p>
+              <div className="flex items-center gap-3 mt-6 justify-center md:justify-start">
+                <span className="text-cream-warm/60 text-xs tracking-[0.22em] uppercase">ספיר אלעזרא</span>
+                <Link href="/about" className="pill pill-tomato">
+                  קראי את הסיפור
+                </Link>
               </div>
-              <Link
-                href="/search"
-                className="text-burgundy text-sm tracking-[0.18em] uppercase border-b border-burgundy pb-1 hover:gap-2 transition-all inline-flex items-center gap-1"
-              >
-                כל המתכונים
-                <span>←</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* RECENT · dense pinterest grid */}
+      {recentSlice.length > 0 && (
+        <section className="bg-cream-warm">
+          <div className="container mx-auto px-6 py-16 md:py-24">
+            <div className="flex items-end justify-between flex-wrap gap-4 mb-8">
+              <div>
+                <span className="eyebrow eyebrow-burgundy">מהמטבח</span>
+                <h2 className="h-section mt-1">הכי טריים אצלי</h2>
+              </div>
+              <Link href="/search" className="pill">
+                כל המתכונים <span aria-hidden>←</span>
               </Link>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-12">
-              {recentSlice.map((r, i) => (
-                <RecipeCard key={r.id} recipe={r} index={i + 2} />
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-4 gap-y-8">
+              {recentSlice.map((r) => (
+                <RecipeCard key={r.id} recipe={r} />
               ))}
             </div>
           </div>
         </section>
       )}
 
-      {/* CHAPTER 04 — BY CHAPTER (3-4 recipes per category, alternating bg) */}
-      <section className="border-b border-ink/10">
-        <div className="container mx-auto px-6 py-24 md:py-32">
-          <div className="flex items-baseline justify-between flex-wrap gap-6 mb-16">
+      {/* BY CHAPTER · bigger images, less text */}
+      <section className="bg-cream">
+        <div className="container mx-auto px-6 py-16 md:py-24">
+          <div className="flex items-end justify-between flex-wrap gap-4 mb-8">
             <div>
-              <div className="section-num mb-3">פרק 04</div>
-              <h2 className="section-title">לפי הפרק</h2>
-              <p className="text-ink-muted mt-4 max-w-md">
-                דוגמאות מכל פרק. תרצי עוד? לחצי על שם הפרק.
-              </p>
+              <span className="eyebrow eyebrow-burgundy">לפי פרק</span>
+              <h2 className="h-section mt-1">דוגמאות מכל פינה</h2>
             </div>
           </div>
-          <div className="space-y-20 md:space-y-28">
-            {categoriesWithCounts.map((cat, cIdx) => (
+          <div className="space-y-14 md:space-y-20">
+            {categoriesWithCounts.map((cat) => (
               cat.samples.length > 0 && (
-                <div key={cat.id} className="border-t border-ink/10 pt-10 md:pt-14">
-                  <div className="flex items-baseline justify-between flex-wrap gap-4 mb-10">
-                    <div className="flex items-baseline gap-5">
-                      <span className="font-display italic text-4xl md:text-5xl text-burgundy">
-                        {String(cIdx + 1).padStart(2, "0")}
+                <div key={cat.id}>
+                  <div className="flex items-end justify-between flex-wrap gap-3 mb-6">
+                    <div className="flex items-center gap-3">
+                      <CategoryPill
+                        href={`/categories/${encodeURIComponent(cat.slug)}`}
+                        label={cat.name}
+                        color={colorForCategory(cat.slug)}
+                        size="pill"
+                      />
+                      <span className="text-ink-muted text-sm">
+                        {cat.totalRecipes} מתכונים
                       </span>
-                      <h3 className="font-display text-3xl md:text-4xl">
-                        <Link href={`/categories/${encodeURIComponent(cat.slug)}`} className="hover:text-burgundy transition-colors">
-                          {cat.name}
-                        </Link>
-                      </h3>
                     </div>
                     <Link
                       href={`/categories/${encodeURIComponent(cat.slug)}`}
-                      className="text-burgundy text-xs tracking-[0.2em] uppercase border-b border-burgundy pb-1 inline-flex items-center gap-2"
+                      className="text-burgundy text-sm font-semibold hover:underline inline-flex items-center gap-1"
                     >
-                      {cat.totalRecipes} בפרק
-                      <span>←</span>
+                      לכל הפרק <span aria-hidden>←</span>
                     </Link>
                   </div>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-12">
-                    {cat.samples.map((r, i) => (
-                      <RecipeCard key={r.id} recipe={r} index={i} />
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8">
+                    {cat.samples.map((r) => (
+                      <RecipeCard key={r.id} recipe={r} />
                     ))}
                   </div>
                 </div>
@@ -318,72 +248,32 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* CHAPTER 05 — KITCHEN PHILOSOPHY (always visible, on cream) */}
-      <section className="border-b border-ink/10 bg-cream">
-        <div className="container mx-auto px-6 py-24 md:py-32">
-          <div className="grid grid-cols-12 gap-8 md:gap-16">
-            <div className="col-span-12 md:col-span-4">
-              <div className="section-num mb-3">פרק 05</div>
-              <h2 className="section-title">פילוסופיית המטבח שלי</h2>
-            </div>
-            <div className="col-span-12 md:col-span-8 grid md:grid-cols-3 gap-10 md:gap-12">
-              <Pillar
-                num="01"
-                title="טרי מנצח מעובד"
-                body="הכי טוב מתחיל בעגבנייה בעונה, שמן זית טוב, ולחם ביתי. אני לא נלהבת מקופסאות שימורים. כשאפשר, מתחילים מאפס. זה גם בריא יותר וגם טעים יותר."
-              />
-              <Pillar
-                num="02"
-                title="גרסה קלה כשאפשר"
-                body="כל מתכון אצלי מקבל וריאציה קלילה יותר. יוגורט במקום שמנת, חיטה מלאה במקום לבנה, פחות סוכר. בלי לפגוע בטעם, רק לתת אופציה."
-              />
-              <Pillar
-                num="03"
-                title="טכניקה שעובדת"
-                body="לקרמל את הבצל לוקח עשר דקות, לא שלוש. הסבלנות הזו היא ההבדל בין מתכון ביתי למתכון של מסעדה. ככה למדתי מסבתא מזל."
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* COLOPHON-STYLE CTA */}
-      <section className="bg-burgundy text-cream-warm">
-        <div className="container mx-auto px-6 py-24 text-center">
-          <p className="eyebrow eyebrow-cream mb-6">להצטרף למטבח</p>
-          <p className="font-display text-4xl md:text-5xl max-w-2xl mx-auto leading-tight">
-            כל יום שני, מתכון אחד חדש.
-            <br />
-            <em>ישר אצלך.</em>
+      {/* CTA · bold colored block */}
+      <section className="bg-section-tomato">
+        <div className="container mx-auto px-6 py-20 md:py-28 text-center">
+          <span className="eyebrow eyebrow-cream mb-4">להצטרף למטבח</span>
+          <h2 className="h-section text-cream-warm mt-3" style={{ color: "var(--color-cream-warm)" }}>
+            כל יום שני, מתכון אחד טרי.
+          </h2>
+          <p className="text-cream-warm/85 mt-5 max-w-md mx-auto text-base">
+            ניוזלטר שבועי קצר, בטעם טוב. נרשמים פעם אחת ומקבלים את המתכון הכי חדש.
           </p>
-          <p className="text-cream-warm/70 mt-6 max-w-md mx-auto text-sm">
-            ניוזלטר שבועי, קצר, בטעם טוב. הירשמי כאן (בקרוב).
+          <form className="mt-8 max-w-md mx-auto flex gap-2">
+            <input
+              type="email"
+              placeholder="כתובת מייל"
+              aria-label="כתובת מייל"
+              className="search-input bg-cream-warm/95 flex-1"
+            />
+            <button type="submit" className="btn-primary bg-ink border-ink hover:bg-ink-deep">
+              הירשמי
+            </button>
+          </form>
+          <p className="text-cream-warm/55 text-xs mt-4">
+            (טופס דמו · נחבר לרשימת תפוצה בקרוב)
           </p>
         </div>
       </section>
     </main>
   );
-}
-
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <div>
-      <dt className="text-[10px] tracking-[0.22em] uppercase text-ink-muted">{label}</dt>
-      <dd className="font-display text-xl mt-1">{value}</dd>
-    </div>
-  );
-}
-
-function Pillar({ num, title, body }: { num: string; title: string; body: string }) {
-  return (
-    <div>
-      <div className="font-display italic text-2xl text-burgundy mb-4">№{num}</div>
-      <h3 className="font-display text-2xl mb-3 leading-tight">{title}</h3>
-      <p className="text-ink/75 leading-relaxed text-sm">{body}</p>
-    </div>
-  );
-}
-
-function diffLabel(d: string) {
-  return ({ EASY: "קל", MEDIUM: "בינוני", HARD: "מתקדם" } as Record<string, string>)[d] ?? d;
 }

@@ -2,21 +2,21 @@
 
 @theme {
   /* Vibrant Mediterranean cookbook palette */
-  --color-burgundy: #D03A2E;        /* tomato/pomegranate red — main accent */
+  --color-burgundy: #D03A2E;        /* tomato/pomegranate red · main accent */
   --color-burgundy-deep: #962219;   /* deeper red for hover/contrast */
   --color-burgundy-light: #E66B5A;  /* warm coral for highlights */
   --color-cream: #FFF1D6;           /* apricot cream */
   --color-cream-dark: #F7DEB8;      /* honey cream */
   --color-cream-warm: #FFF7E5;      /* warm off-white default bg */
   --color-paper: #FFFCF1;           /* near-white paper */
-  --color-ink: #2A1A0E;             /* warm dark espresso (was cold near-black) */
+  --color-ink: #2A1A0E;             /* warm dark espresso */
   --color-ink-deep: #1A0F08;        /* deepest espresso */
   --color-ink-muted: #7A5F4A;       /* warm taupe */
   --color-olive: #708F3E;           /* vivid olive green */
   --color-olive-deep: #4E6628;      /* darker olive */
   --color-mustard: #F2A93B;         /* bright marigold */
-  --color-saffron: #E8771C;         /* saffron orange — new accent */
-  --color-pistachio: #A4B884;       /* soft sage for tags */
+  --color-saffron: #E8771C;         /* saffron orange */
+  --color-pistachio: #A4B884;       /* soft sage */
   --color-brass: #C9A875;
 
   --font-display: var(--font-frank), Georgia, serif;
@@ -29,9 +29,6 @@
 
 body {
   background-color: var(--color-cream-warm);
-  background-image:
-    radial-gradient(circle at 1px 1px, rgba(208, 58, 46, 0.05) 1px, transparent 0);
-  background-size: 28px 28px;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -41,10 +38,47 @@ body {
   color: var(--color-cream-warm);
 }
 
+/* ====================================================
+   TYPOGRAPHY · bold modern sans + selective serif italic
+   ==================================================== */
+
+/* Display sans-serif heading · used for hero / huge titles */
+.h-display {
+  font-family: var(--font-body);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.025em;
+  font-size: clamp(3rem, 10vw, 8.5rem);
+}
+
+/* Big bold section headline */
+.h-section {
+  font-family: var(--font-body);
+  font-weight: 900;
+  line-height: 1.0;
+  letter-spacing: -0.02em;
+  font-size: clamp(2rem, 5vw, 4rem);
+}
+
+/* Smaller bold heading */
+.h-bold {
+  font-family: var(--font-body);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+/* Sapir personal voice · serif italic, used selectively */
+.voice-sapir {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--color-burgundy);
+}
+
 .eyebrow {
   font-family: var(--font-body);
   font-size: 0.7rem;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.22em;
   color: var(--color-ink-muted);
   text-transform: uppercase;
@@ -54,27 +88,26 @@ body {
 .eyebrow-burgundy { color: var(--color-burgundy); }
 .eyebrow-cream { color: var(--color-cream-warm); opacity: 0.7; }
 
+.label-tracked {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* Legacy magazine bits · kept for the few places that still want them */
 .section-num {
-  font-family: var(--font-display);
-  font-size: 0.95rem;
-  letter-spacing: 0.1em;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
   color: var(--color-burgundy);
-  font-style: italic;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.section-num::before,
-.section-num::after {
-  content: "";
+  text-transform: uppercase;
   display: inline-block;
-  width: 2.5rem;
-  height: 1px;
-  background: currentColor;
-  opacity: 0.4;
 }
 
+/* Existing legacy class used in a few helpers · minimal serif italic burgundy */
 .prose-sapir {
   font-family: var(--font-display);
   font-style: italic;
@@ -91,12 +124,110 @@ body {
   opacity: 0.12;
 }
 
+/* ====================================================
+   BUTTONS, CHIPS, PILLS
+   ==================================================== */
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.875rem;
+  letter-spacing: 0.02em;
+  background: var(--color-burgundy);
+  color: var(--color-cream-warm);
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  border: 1px solid var(--color-burgundy);
+  transition: background 200ms ease, transform 200ms ease, box-shadow 200ms ease;
+  cursor: pointer;
+}
+.btn-primary:hover {
+  background: var(--color-burgundy-deep);
+  border-color: var(--color-burgundy-deep);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(208, 58, 46, 0.25);
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.875rem;
+  letter-spacing: 0.02em;
+  background: transparent;
+  color: var(--color-ink);
+  padding: 0.7rem 1.4rem;
+  border-radius: 9999px;
+  border: 1.5px solid var(--color-ink);
+  transition: background 200ms ease, color 200ms ease;
+  cursor: pointer;
+}
+.btn-ghost:hover {
+  background: var(--color-ink);
+  color: var(--color-cream-warm);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  padding: 0.35rem 0.75rem;
+  border-radius: 9999px;
+  background: rgba(42, 26, 14, 0.06);
+  color: var(--color-ink);
+  transition: background 200ms ease, color 200ms ease, transform 200ms ease;
+}
+
+.chip-tomato { background: var(--color-burgundy); color: var(--color-cream-warm); }
+.chip-marigold { background: var(--color-mustard); color: var(--color-ink); }
+.chip-saffron { background: var(--color-saffron); color: var(--color-cream-warm); }
+.chip-olive { background: var(--color-olive); color: var(--color-cream-warm); }
+.chip-pistachio { background: var(--color-pistachio); color: var(--color-ink); }
+.chip-cream { background: var(--color-cream); color: var(--color-ink); }
+.chip-ink { background: var(--color-ink); color: var(--color-cream-warm); }
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: 0.55rem 1.1rem;
+  border-radius: 9999px;
+  background: var(--color-cream);
+  color: var(--color-ink);
+  border: 1px solid transparent;
+  transition: background 200ms ease, color 200ms ease, transform 200ms ease, border-color 200ms ease;
+}
+.pill:hover { background: var(--color-burgundy); color: var(--color-cream-warm); transform: translateY(-1px); }
+.pill-active { background: var(--color-ink); color: var(--color-cream-warm); }
+
+.pill-tomato:hover { background: var(--color-burgundy); color: var(--color-cream-warm); }
+.pill-marigold:hover { background: var(--color-mustard); color: var(--color-ink); }
+.pill-saffron:hover { background: var(--color-saffron); color: var(--color-cream-warm); }
+.pill-olive:hover { background: var(--color-olive); color: var(--color-cream-warm); }
+.pill-pistachio:hover { background: var(--color-pistachio); color: var(--color-ink); }
+
+/* ====================================================
+   IMAGE + HOVER UTILITIES
+   ==================================================== */
+
 .img-hover {
   transition: transform 700ms cubic-bezier(0.16, 1, 0.3, 1), filter 400ms ease;
 }
 
 .group:hover .img-hover {
-  transform: scale(1.04);
+  transform: scale(1.06);
 }
 
 .img-vignette { position: relative; }
@@ -104,9 +235,39 @@ body {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(14,10,7,0.55) 100%);
+  background: linear-gradient(180deg, rgba(0,0,0,0) 45%, rgba(14,10,7,0.65) 100%);
   pointer-events: none;
 }
+
+/* Card hover overlay reveal */
+.card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(14,10,7,0.85) 100%);
+  opacity: 0;
+  transition: opacity 300ms ease;
+  pointer-events: none;
+}
+.group:hover .card-overlay { opacity: 1; }
+
+.card-subtitle-slide {
+  position: absolute;
+  bottom: 0.85rem;
+  inset-inline-start: 0.85rem;
+  inset-inline-end: 0.85rem;
+  color: var(--color-cream-warm);
+  font-size: 0.8rem;
+  font-weight: 500;
+  line-height: 1.35;
+  transform: translateY(8px);
+  opacity: 0;
+  transition: transform 300ms ease, opacity 300ms ease;
+}
+.group:hover .card-subtitle-slide { transform: translateY(0); opacity: 1; }
+
+/* ====================================================
+   ANIMATIONS
+   ==================================================== */
 
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(16px); }
@@ -114,7 +275,7 @@ body {
 }
 
 .fade-up {
-  animation: fadeUp 900ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  animation: fadeUp 700ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
 }
 
 @keyframes drawLine {
@@ -124,54 +285,33 @@ body {
 
 .draw-line {
   transform-origin: right center;
-  animation: drawLine 1200ms cubic-bezier(0.16, 1, 0.3, 1) 200ms backwards;
+  animation: drawLine 1000ms cubic-bezier(0.16, 1, 0.3, 1) 200ms backwards;
 }
 
-.drop-num {
-  font-family: var(--font-display);
-  font-size: 5.5rem;
-  line-height: 0.9;
-  font-style: italic;
-  color: var(--color-burgundy);
-  display: inline-block;
+/* ====================================================
+   COLOR-BLOCK SECTIONS
+   ==================================================== */
+
+.bg-section-cream { background: var(--color-cream); }
+.bg-section-saffron { background: var(--color-saffron); color: var(--color-cream-warm); }
+.bg-section-olive { background: var(--color-olive); color: var(--color-cream-warm); }
+.bg-section-marigold { background: var(--color-mustard); color: var(--color-ink); }
+.bg-section-pistachio { background: var(--color-pistachio); color: var(--color-ink); }
+.bg-section-tomato { background: var(--color-burgundy); color: var(--color-cream-warm); }
+.bg-section-ink { background: var(--color-ink-deep); color: var(--color-cream-warm); }
+
+/* Sticky header backdrop */
+.header-blur {
+  background: rgba(255, 247, 229, 0.85);
+  backdrop-filter: saturate(180%) blur(12px);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
 }
 
-.ornament {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  color: var(--color-burgundy);
-  opacity: 0.5;
-}
-.ornament::before,
-.ornament::after {
-  content: "";
-  display: block;
-  width: 4rem;
-  height: 1px;
-  background: currentColor;
-}
+/* Card title hover */
+.group:hover .card-title { color: var(--color-burgundy); }
+.card-title { transition: color 300ms ease; }
 
-/* Hero giant title */
-.hero-title {
-  font-family: var(--font-display);
-  font-weight: 400;
-  line-height: 0.92;
-  letter-spacing: -0.025em;
-  font-size: clamp(4rem, 11vw, 12rem);
-}
-
-/* Section title */
-.section-title {
-  font-family: var(--font-display);
-  font-weight: 400;
-  line-height: 1.0;
-  letter-spacing: -0.02em;
-  font-size: clamp(2.5rem, 6vw, 5rem);
-}
-
-/* Underline link with brushed feel */
+/* Underline link */
 .link-underline {
   position: relative;
   display: inline-block;
@@ -186,14 +326,56 @@ body {
   transform-origin: right center;
   transition: transform 400ms cubic-bezier(0.16, 1, 0.3, 1);
 }
-.link-underline:hover::after {
-  transform: scaleX(0);
+.link-underline:hover::after { transform: scaleX(0); }
+
+/* Number circle for steps */
+.step-num {
+  font-family: var(--font-body);
+  font-weight: 900;
+  font-size: 1.5rem;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-burgundy);
+  color: var(--color-cream-warm);
+  flex-shrink: 0;
+  letter-spacing: -0.02em;
 }
 
-/* Card title hover */
-.group:hover .card-title {
-  color: var(--color-burgundy);
+/* Search input */
+.search-input {
+  width: 100%;
+  font-family: var(--font-body);
+  font-weight: 500;
+  background: var(--color-paper);
+  border: 1.5px solid rgba(42, 26, 14, 0.12);
+  border-radius: 9999px;
+  padding: 0.7rem 1.25rem;
+  font-size: 0.95rem;
+  transition: border-color 200ms ease, box-shadow 200ms ease;
 }
-.card-title {
-  transition: color 300ms ease;
+.search-input:focus {
+  outline: none;
+  border-color: var(--color-burgundy);
+  box-shadow: 0 0 0 4px rgba(208, 58, 46, 0.12);
 }
+
+.search-input-large {
+  font-size: 1.5rem;
+  font-weight: 700;
+  padding: 1.1rem 1.75rem;
+}
+
+/* Sticky sidebar */
+.sidebar-sticky {
+  position: sticky;
+  top: 6.5rem;
+  align-self: start;
+}
+
+/* Hide scrollbar for horizontal scroll lists */
+.no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
