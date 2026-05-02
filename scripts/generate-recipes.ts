@@ -165,7 +165,8 @@ async function generateOne(target: Target): Promise<void> {
         ageRange: target.ageRange ?? null,
         seoTitle: content.seoTitle,
         seoDescription: content.seoDescription,
-        status: "DRAFT",
+        status: "PUBLISHED",
+        publishedAt: new Date(),
         categories: {
           create: categories.map((c) => ({ categoryId: c.id })),
         },
