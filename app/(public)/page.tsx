@@ -68,7 +68,7 @@ export default async function Home() {
         <div className="container mx-auto px-6 pt-8 md:pt-14 pb-12 md:pb-20">
           <div className="grid grid-cols-12 gap-6 md:gap-10 items-stretch">
             {/* Headline column */}
-            <div className="col-span-12 lg:col-span-6 flex flex-col justify-center order-2 lg:order-1 fade-up">
+            <div className="col-span-12 lg:col-span-6 flex flex-col justify-center order-2 lg:order-1 fade-up min-w-0">
               <div className="flex items-center gap-2 mb-5">
                 <span className="chip chip-tomato">חדש כל שבוע</span>
                 <span className="chip chip-cream">{totalCount}+ מתכונים</span>
@@ -97,7 +97,7 @@ export default async function Home() {
             </div>
 
             {/* Feature recipe card */}
-            <div className="col-span-12 lg:col-span-6 order-1 lg:order-2 fade-up" style={{ animationDelay: "120ms" }}>
+            <div className="col-span-12 lg:col-span-6 order-1 lg:order-2 fade-up min-w-0" style={{ animationDelay: "120ms" }}>
               {weekFeature ? (
                 <RecipeCardLarge recipe={weekFeature} />
               ) : (
@@ -114,7 +114,7 @@ export default async function Home() {
           <div className="flex items-end justify-between flex-wrap gap-4 mb-6">
             <div>
               <span className="eyebrow eyebrow-burgundy mb-2">פרקים</span>
-              <h2 className="h-section text-ink mt-1">בחרי על מה את במצב</h2>
+              <h2 className="h-section text-ink mt-1">מה בא לך לבשל היום?</h2>
             </div>
             <p className="text-ink-muted max-w-md text-sm">
               שש קטגוריות, מאות מתכונים. דפדפי או חפשי משהו ספציפי.
@@ -263,9 +263,9 @@ export default async function Home() {
               type="email"
               placeholder="כתובת מייל"
               aria-label="כתובת מייל"
-              className="search-input bg-cream-warm/95 flex-1"
+              className="search-input bg-cream-warm/95 flex-1 min-w-0"
             />
-            <button type="submit" className="btn-primary bg-ink border-ink hover:bg-ink-deep">
+            <button type="submit" className="btn-primary bg-ink border-ink hover:bg-ink-deep shrink-0">
               הירשמי
             </button>
           </form>

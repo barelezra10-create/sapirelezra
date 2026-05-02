@@ -12,9 +12,9 @@ export async function SiteFooter() {
     <footer className="bg-ink-deep text-cream-warm mt-0">
       {/* Top */}
       <div className="container mx-auto px-6 pt-16 pb-12">
-        <div className="grid grid-cols-12 gap-10">
+        <div className="grid grid-cols-12 gap-y-10 md:gap-10">
           {/* Brand */}
-          <div className="col-span-12 md:col-span-4">
+          <div className="col-span-12 md:col-span-4 min-w-0">
             <div className="flex items-baseline gap-2">
               <span className="font-body font-black text-3xl tracking-tight">ספיר</span>
               <span className="font-display italic text-burgundy-light text-2xl">אלעזרא</span>
@@ -36,7 +36,7 @@ export async function SiteFooter() {
           </div>
 
           {/* Categories */}
-          <div className="col-span-12 sm:col-span-6 md:col-span-4">
+          <div className="col-span-12 sm:col-span-6 md:col-span-4 min-w-0">
             <h4 className="font-body font-bold text-cream-warm mb-4 text-sm tracking-widest uppercase">
               פרקים
             </h4>
@@ -54,7 +54,7 @@ export async function SiteFooter() {
           </div>
 
           {/* Links + Newsletter */}
-          <div className="col-span-12 sm:col-span-6 md:col-span-4">
+          <div className="col-span-12 sm:col-span-6 md:col-span-4 min-w-0">
             <h4 className="font-body font-bold text-cream-warm mb-4 text-sm tracking-widest uppercase">
               ניוזלטר
             </h4>
@@ -66,9 +66,9 @@ export async function SiteFooter() {
                 type="email"
                 placeholder="כתובת מייל"
                 aria-label="כתובת מייל"
-                className="search-input bg-cream-warm/10 border-cream-warm/20 text-cream-warm placeholder:text-cream-warm/50 flex-1"
+                className="search-input bg-cream-warm/10 border-cream-warm/20 text-cream-warm placeholder:text-cream-warm/50 flex-1 min-w-0"
               />
-              <button type="submit" className="btn-primary">
+              <button type="submit" className="btn-primary shrink-0">
                 הירשמי
               </button>
             </form>

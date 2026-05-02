@@ -369,11 +369,15 @@ body {
   padding: 1.1rem 1.75rem;
 }
 
-/* Sticky sidebar */
+/* Sticky sidebar — only on lg+ so mobile/tablet keep ingredients statically at top */
 .sidebar-sticky {
-  position: sticky;
-  top: 6.5rem;
   align-self: start;
+}
+@media (min-width: 1024px) {
+  .sidebar-sticky {
+    position: sticky;
+    top: 6.5rem;
+  }
 }
 
 /* Hide scrollbar for horizontal scroll lists */

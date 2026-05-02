@@ -49,8 +49,8 @@ export function HeaderClient({ categories }: { categories: Cat[] }) {
           </span>
         </Link>
 
-        {/* Search input · always visible */}
-        <form action="/search" method="GET" className="flex-1 max-w-xl">
+        {/* Search input · desktop only · spacer pushes actions right */}
+        <form action="/search" method="GET" className="hidden md:block flex-1 max-w-xl min-w-0">
           <label className="sr-only" htmlFor="hdr-search">חיפוש מתכון</label>
           <div className="relative">
             <input
@@ -69,6 +69,18 @@ export function HeaderClient({ categories }: { categories: Cat[] }) {
             </button>
           </div>
         </form>
+
+        {/* Mobile spacer · keeps brand left, actions right */}
+        <div className="flex-1 md:hidden" />
+
+        {/* Mobile search shortcut · icon button to /search page */}
+        <Link
+          href="/search"
+          aria-label="חיפוש"
+          className="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-full border border-ink/15 text-ink hover:bg-ink hover:text-cream-warm transition-colors"
+        >
+          <SearchIcon />
+        </Link>
 
         {/* Right-side actions (desktop) */}
         <nav className="hidden lg:flex items-center gap-2">
@@ -106,6 +118,26 @@ export function HeaderClient({ categories }: { categories: Cat[] }) {
       {open && (
         <div className="lg:hidden border-t border-ink/10 bg-cream-warm">
           <div className="container mx-auto px-6 py-5 space-y-5">
+            {/* Mobile search inside drawer */}
+            <form action="/search" method="GET" className="md:hidden">
+              <label className="sr-only" htmlFor="hdr-search-mobile">חיפוש מתכון</label>
+              <div className="relative">
+                <input
+                  id="hdr-search-mobile"
+                  type="search"
+                  name="q"
+                  placeholder="חפשי מתכון..."
+                  className="search-input pe-10 ps-4"
+                />
+                <button
+                  type="submit"
+                  aria-label="חפש"
+                  className="absolute inset-y-0 end-2 flex items-center justify-center w-8 h-8 my-auto text-ink-muted hover:text-burgundy transition-colors"
+                >
+                  <SearchIcon />
+                </button>
+              </div>
+            </form>
             <div className="flex flex-wrap gap-2">
               {categories.map((c) => (
                 <CategoryPill

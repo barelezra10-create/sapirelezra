@@ -129,7 +129,7 @@ export default async function RecipePage({ params }: { params: Params }) {
         <div className="container mx-auto px-6 py-14 md:py-20">
           <div className="grid grid-cols-12 gap-8 lg:gap-12">
             {/* Steps · main column */}
-            <div className="col-span-12 lg:col-span-8 order-2 lg:order-1">
+            <div className="col-span-12 lg:col-span-8 order-2 lg:order-1 min-w-0">
               <div className="flex items-center gap-3 mb-8">
                 <h2 className="h-section text-ink">הכנה</h2>
                 <span className="chip chip-cream">{steps.length} שלבים</span>
@@ -162,7 +162,7 @@ export default async function RecipePage({ params }: { params: Params }) {
             </div>
 
             {/* Sticky ingredients sidebar */}
-            <aside className="col-span-12 lg:col-span-4 order-1 lg:order-2">
+            <aside className="col-span-12 lg:col-span-4 order-1 lg:order-2 min-w-0">
               <div className="sidebar-sticky bg-paper rounded-2xl border border-ink/10 p-6 md:p-7 shadow-sm">
                 <div className="flex items-center justify-between gap-3 mb-5">
                   <h2 className="font-body font-black text-2xl text-ink leading-none">מצרכים</h2>

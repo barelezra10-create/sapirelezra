@@ -45,11 +45,11 @@ export default async function SearchPage({
                 defaultValue={q}
                 placeholder="שקשוקה, חלה, מנה לילדים..."
                 autoFocus
-                className="search-input search-input-large pe-16"
+                className="search-input search-input-large pe-28 md:pe-32"
               />
               <button
                 type="submit"
-                className="absolute end-2 top-1/2 -translate-y-1/2 btn-primary !py-3 !px-5"
+                className="absolute end-2 top-1/2 -translate-y-1/2 btn-primary !py-2.5 !px-4 md:!py-3 md:!px-5 text-sm md:text-base"
                 aria-label="חפש"
               >
                 חפשי

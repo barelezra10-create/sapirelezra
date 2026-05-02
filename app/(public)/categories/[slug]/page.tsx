@@ -147,7 +147,7 @@ export default async function CategoryPage({
       </section>
 
       {/* FILTERS · sticky pill nav row */}
-      <div className="sticky top-[6.5rem] z-30 bg-cream-warm/95 backdrop-blur-md border-b border-ink/10">
+      <div className="sticky top-24 lg:top-[6.5rem] z-30 bg-cream-warm/95 backdrop-blur-md border-b border-ink/10">
         <div className="container mx-auto px-6 py-3 flex gap-3 overflow-x-auto no-scrollbar items-center">
           <FilterGroup label="זמן">
             <FilterPill href={buildHref("time")} active={!sp.time} label="הכל" />
