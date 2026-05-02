@@ -1,43 +1,45 @@
-import { GoogleGenAI, Type } from "@google/genai";
+import Anthropic from "@anthropic-ai/sdk";
 import { SAPIR_SYSTEM_PROMPT } from "./sapir-prompt";
 import { recipeInputSchema } from "./recipe-schema";
 
-let cachedAi: GoogleGenAI | null = null;
-function getAi(): GoogleGenAI {
-  if (!cachedAi) {
-    if (!process.env.GEMINI_API_KEY) throw new Error("GEMINI_API_KEY not set");
-    cachedAi = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+let cachedClient: Anthropic | null = null;
+function getClient(): Anthropic {
+  if (!cachedClient) {
+    if (!process.env.ANTHROPIC_API_KEY) {
+      throw new Error("ANTHROPIC_API_KEY not set");
+    }
+    cachedClient = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
   }
-  return cachedAi;
+  return cachedClient;
 }
 
-const responseSchema = {
-  type: Type.OBJECT,
+const recipeToolInputSchema = {
+  type: "object" as const,
   properties: {
-    slug: { type: Type.STRING },
-    title: { type: Type.STRING },
-    subtitle: { type: Type.STRING },
-    sapirIntro: { type: Type.STRING },
-    prepTimeMin: { type: Type.INTEGER },
-    cookTimeMin: { type: Type.INTEGER },
-    totalTimeMin: { type: Type.INTEGER },
-    servings: { type: Type.INTEGER },
-    difficulty: { type: Type.STRING, enum: ["EASY", "MEDIUM", "HARD"] },
+    slug: { type: "string" },
+    title: { type: "string" },
+    subtitle: { type: "string" },
+    sapirIntro: { type: "string" },
+    prepTimeMin: { type: "integer" },
+    cookTimeMin: { type: "integer" },
+    totalTimeMin: { type: "integer" },
+    servings: { type: "integer" },
+    difficulty: { type: "string", enum: ["EASY", "MEDIUM", "HARD"] },
     ingredients: {
-      type: Type.ARRAY,
+      type: "array",
       items: {
-        type: Type.OBJECT,
+        type: "object",
         properties: {
-          groupName: { type: Type.STRING },
+          groupName: { type: "string" },
           items: {
-            type: Type.ARRAY,
+            type: "array",
             items: {
-              type: Type.OBJECT,
+              type: "object",
               properties: {
-                name: { type: Type.STRING },
-                quantity: { type: Type.STRING },
-                unit: { type: Type.STRING },
-                note: { type: Type.STRING },
+                name: { type: "string" },
+                quantity: { type: "string" },
+                unit: { type: "string" },
+                note: { type: "string" },
               },
               required: ["name"],
             },
@@ -47,32 +49,35 @@ const responseSchema = {
       },
     },
     steps: {
-      type: Type.ARRAY,
+      type: "array",
       items: {
-        type: Type.OBJECT,
+        type: "object",
         properties: {
-          order: { type: Type.INTEGER },
-          text: { type: Type.STRING },
+          order: { type: "integer" },
+          text: { type: "string" },
         },
         required: ["order", "text"],
       },
     },
-    sapirTips: { type: Type.ARRAY, items: { type: Type.STRING } },
+    sapirTips: { type: "array", items: { type: "string" } },
     variations: {
-      type: Type.ARRAY,
+      type: "array",
       items: {
-        type: Type.OBJECT,
+        type: "object",
         properties: {
-          title: { type: Type.STRING },
-          description: { type: Type.STRING },
+          title: { type: "string" },
+          description: { type: "string" },
         },
         required: ["title", "description"],
       },
     },
-    kosher: { type: Type.STRING, enum: ["DAIRY", "MEAT", "PAREVE", "NOT_KOSHER"] },
-    dietTags: { type: Type.ARRAY, items: { type: Type.STRING } },
-    seoTitle: { type: Type.STRING },
-    seoDescription: { type: Type.STRING },
+    kosher: {
+      type: "string",
+      enum: ["DAIRY", "MEAT", "PAREVE", "NOT_KOSHER"],
+    },
+    dietTags: { type: "array", items: { type: "string" } },
+    seoTitle: { type: "string" },
+    seoDescription: { type: "string" },
   },
   required: [
     "slug",
@@ -118,28 +123,45 @@ export type GeneratedRecipe = {
   seoDescription: string;
 };
 
-export async function generateRecipeContent(target: Target): Promise<GeneratedRecipe> {
+export async function generateRecipeContent(
+  target: Target,
+): Promise<GeneratedRecipe> {
   const userPrompt = `כתבי מתכון מלא ל"${target.title}". קטגוריות: ${target.categorySlugs.join(
-    ", "
+    ", ",
   )}. רמזים: ${target.tagHints.join(", ") || "אין"}.${
     target.ageRange ? ` טווח גילאים: ${target.ageRange}.` : ""
   }`;
 
-  const ai = getAi();
-  const response = await ai.models.generateContent({
-    model: "gemini-2.5-pro",
-    contents: [{ role: "user", parts: [{ text: userPrompt }] }],
-    config: {
-      systemInstruction: SAPIR_SYSTEM_PROMPT,
-      responseMimeType: "application/json",
-      responseSchema: responseSchema as any,
-      temperature: 0.7,
-    },
+  const client = getClient();
+  const response = await client.messages.create({
+    model: "claude-sonnet-4-6",
+    max_tokens: 16000,
+    system: [
+      {
+        type: "text",
+        text: SAPIR_SYSTEM_PROMPT,
+        cache_control: { type: "ephemeral" },
+      },
+    ],
+    tools: [
+      {
+        name: "record_recipe",
+        description:
+          "Record a complete recipe with all required fields in Hebrew, following Sapir's voice.",
+        input_schema: recipeToolInputSchema,
+      },
+    ],
+    tool_choice: { type: "tool", name: "record_recipe" },
+    messages: [{ role: "user", content: userPrompt }],
   });
 
-  const text = response.text ?? "";
-  const cleaned = text.replace(/```json\n?|```/g, "").trim();
-  const raw = JSON.parse(cleaned) as GeneratedRecipe;
+  const toolUseBlock = response.content.find(
+    (b): b is Anthropic.ToolUseBlock => b.type === "tool_use",
+  );
+  if (!toolUseBlock) {
+    throw new Error("No tool_use block in Claude response");
+  }
+  const raw = toolUseBlock.input as GeneratedRecipe;
 
   // Light Zod-friendly validation: re-use the recipe input schema's subset.
   // Fill placeholder values for image fields and category links so the schema

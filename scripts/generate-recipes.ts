@@ -7,7 +7,7 @@ import {
   generateRecipeContent,
   checkVoiceCompliance,
   type Target,
-} from "../lib/gemini";
+} from "../lib/text-gen";
 import {
   generateRecipeHero,
   generateRecipeStepImage,
@@ -18,7 +18,7 @@ const __dirname = dirname(__filename);
 
 const COST_CAP_USD = 400;
 const PER_RECIPE_CAP_USD = 0.5;
-const COST_PER_TEXT_GEN = 0.05;
+const COST_PER_TEXT_GEN = 0.015;
 const COST_PER_IMAGE = 0.04;
 const SKIP_IMAGES = process.env.SKIP_IMAGES === "1" || !process.env.R2_ACCESS_KEY_ID;
 const PLACEHOLDER_HERO = "/sapir/sapir-wide-kitchen.png";

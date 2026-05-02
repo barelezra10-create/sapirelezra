@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { checkVoiceCompliance } from "../gemini";
+import { checkVoiceCompliance } from "../text-gen";
 
 describe("checkVoiceCompliance", () => {
   it("flags em dash", () => {
