@@ -43,9 +43,15 @@ const POOLS: Record<string, string[]> = {
   ],
   pizza: [
     "1604068549290-dea0e4a305ca",
-    "1565299624946-b28f40a0ae38",
     "1571997478779-2adcbbe9ab2f",
     "1574071318508-1cdbab80d002",
+  ],
+  baked: [
+    "1568901346375-23c9450c58cd",
+    "1547573854-74d2a71d0826",
+    "1574484284002-952d92456975",
+    "1564834724105-918b73d1b9e0",
+    "1604920265583-eecf3a4a35e7",
   ],
   bread: [
     "1568471173242-461f0a730452",
@@ -145,10 +151,10 @@ const POOLS: Record<string, string[]> = {
     "1502301197179-65228ab57f78",
   ],
   defaultSavory: [
-    "1565299624946-b28f40a0ae38",
     "1604908554049-9c35d59df745",
-    "1574071318508-1cdbab80d002",
     "1612459284970-e8f027596582",
+    "1546548970-71785318a17b",
+    "1604908176997-125f25cc6f3d",
   ],
   defaultSweet: [
     "1606313564200-e75d5e30476c",
@@ -180,6 +186,8 @@ const RULES: Rule[] = [
   { pool: "sushi", anyOf: ["סושי", "מאקי", "ניגירי", "סשימי"] },
   // 3. Pizza / focaccia
   { pool: "pizza", anyOf: ["פיצה", "פוקצ'ה", "פוקאצ'ה", "קלצונה"] },
+  // 3b. Baked layered/casserole dishes (gratin, casserole, mille-feuille savory, lasagna-like)
+  { pool: "baked", anyOf: ["גרטן", "קסרול", "מילופי", "מוסקה", "אנצ'ילדה", "פאי בשר", "פאי עוף", "פאי דגים", "אפויה בתנור", "מאפה ירקות", "מאפה גבינה"] },
   // 4. Pasta
   {
     pool: "pasta",
