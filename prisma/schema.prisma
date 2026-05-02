@@ -29,6 +29,7 @@ model Recipe {
   ageRange        String?
   seoTitle        String
   seoDescription  String
+  imagePrompt     String?   @db.Text
   status          RecipeStatus @default(DRAFT)
   publishedAt     DateTime?
   createdAt       DateTime  @default(now())
