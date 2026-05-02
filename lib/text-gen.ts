@@ -123,9 +123,27 @@ export type GeneratedRecipe = {
   seoDescription: string;
 };
 
-export async function generateRecipeContent(
-  target: Target,
-): Promise<GeneratedRecipe> {
+function isRetryable(err: unknown): boolean {
+  if (!err || typeof err !== "object") return false;
+  const e = err as { status?: number; message?: string };
+  if (e.status === 429 || e.status === 500 || e.status === 502 || e.status === 503 || e.status === 529) return true;
+  const msg = (e.message ?? "").toLowerCase();
+  return msg.includes("rate_limit") || msg.includes("overloaded") || msg.includes("timeout");
+}
+
+function parseRetryAfter(err: unknown): number {
+  // Try to extract a retry-after hint from the error. Default to a baseline.
+  if (!err || typeof err !== "object") return 0;
+  const e = err as { headers?: Record<string, string>; message?: string };
+  const ra = e.headers?.["retry-after"];
+  if (ra) {
+    const n = parseInt(ra, 10);
+    if (!isNaN(n)) return n;
+  }
+  return 0;
+}
+
+async function callClaudeWithRetry(target: Target, attempt = 0): Promise<GeneratedRecipe> {
   const userPrompt = `כתבי מתכון מלא ל"${target.title}". קטגוריות: ${target.categorySlugs.join(
     ", ",
   )}. רמזים: ${target.tagHints.join(", ") || "אין"}.${
@@ -133,35 +151,52 @@ export async function generateRecipeContent(
   }`;
 
   const client = getClient();
-  const response = await client.messages.create({
-    model: "claude-sonnet-4-6",
-    max_tokens: 16000,
-    system: [
-      {
-        type: "text",
-        text: SAPIR_SYSTEM_PROMPT,
-        cache_control: { type: "ephemeral" },
-      },
-    ],
-    tools: [
-      {
-        name: "record_recipe",
-        description:
-          "Record a complete recipe with all required fields in Hebrew, following Sapir's voice.",
-        input_schema: recipeToolInputSchema,
-      },
-    ],
-    tool_choice: { type: "tool", name: "record_recipe" },
-    messages: [{ role: "user", content: userPrompt }],
-  });
+  try {
+    const response = await client.messages.create({
+      model: "claude-sonnet-4-6",
+      max_tokens: 8000,
+      system: [
+        {
+          type: "text",
+          text: SAPIR_SYSTEM_PROMPT,
+          cache_control: { type: "ephemeral" },
+        },
+      ],
+      tools: [
+        {
+          name: "record_recipe",
+          description:
+            "Record a complete recipe with all required fields in Hebrew, following Sapir's voice. seoDescription must be MAX 160 characters. seoTitle must be MAX 70 characters.",
+          input_schema: recipeToolInputSchema,
+        },
+      ],
+      tool_choice: { type: "tool", name: "record_recipe" },
+      messages: [{ role: "user", content: userPrompt }],
+    });
 
-  const toolUseBlock = response.content.find(
-    (b): b is Anthropic.ToolUseBlock => b.type === "tool_use",
-  );
-  if (!toolUseBlock) {
-    throw new Error("No tool_use block in Claude response");
+    const toolUseBlock = response.content.find(
+      (b): b is Anthropic.ToolUseBlock => b.type === "tool_use",
+    );
+    if (!toolUseBlock) {
+      throw new Error("No tool_use block in Claude response");
+    }
+    return toolUseBlock.input as GeneratedRecipe;
+  } catch (err) {
+    if (isRetryable(err) && attempt < 5) {
+      const hint = parseRetryAfter(err);
+      const waitMs = hint > 0 ? hint * 1000 : Math.min(60_000, 5_000 * Math.pow(2, attempt));
+      console.warn(`  retryable error for "${target.title}", waiting ${(waitMs / 1000).toFixed(0)}s (attempt ${attempt + 1}/5)`);
+      await new Promise((r) => setTimeout(r, waitMs));
+      return callClaudeWithRetry(target, attempt + 1);
+    }
+    throw err;
   }
-  const raw = toolUseBlock.input as GeneratedRecipe;
+}
+
+export async function generateRecipeContent(
+  target: Target,
+): Promise<GeneratedRecipe> {
+  const raw = await callClaudeWithRetry(target);
 
   // Light Zod-friendly validation: re-use the recipe input schema's subset.
   // Fill placeholder values for image fields and category links so the schema
