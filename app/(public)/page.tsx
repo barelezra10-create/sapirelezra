@@ -6,38 +6,48 @@ import { RecipeCard, RecipeCardLarge } from "@/components/recipe-card";
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const [allPublished, topCategoriesRaw] = await Promise.all([
+  const [allPublished, topCategoriesRaw, totalCount] = await Promise.all([
     db.recipe.findMany({
       where: { status: "PUBLISHED" },
       orderBy: { publishedAt: "desc" },
-      take: 12,
+      take: 24,
     }),
     db.category.findMany({
       where: { parentId: null },
       orderBy: { order: "asc" },
       include: { _count: { select: { recipes: true, children: true } } },
     }),
+    db.recipe.count({ where: { status: "PUBLISHED" } }),
   ]);
 
   const weekFeature = allPublished[0];
-  const remainingRecent = allPublished.slice(1, 9);
+  const recentSlice = allPublished.slice(1, 13);
 
-  // Compute total recipe count per top category, including children's recipes
+  // Compute total recipe count + 4 sample recipes per top category
   const categoriesWithCounts = await Promise.all(
     topCategoriesRaw.map(async (c) => {
       const childIds = await db.category.findMany({
         where: { parentId: c.id },
         select: { id: true },
       });
-      const total = await db.recipe.count({
-        where: {
-          status: "PUBLISHED",
-          categories: {
-            some: { categoryId: { in: [c.id, ...childIds.map((x) => x.id)] } },
+      const allIds = [c.id, ...childIds.map((x) => x.id)];
+      const [total, samples] = await Promise.all([
+        db.recipe.count({
+          where: {
+            status: "PUBLISHED",
+            categories: { some: { categoryId: { in: allIds } } },
           },
-        },
-      });
-      return { ...c, totalRecipes: total };
+        }),
+        db.recipe.findMany({
+          where: {
+            status: "PUBLISHED",
+            categories: { some: { categoryId: { in: allIds } } },
+          },
+          orderBy: { publishedAt: "desc" },
+          take: 4,
+        }),
+      ]);
+      return { ...c, totalRecipes: total, samples };
     })
   );
 
@@ -232,14 +242,17 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* CHAPTER 03 — RECENT RECIPES */}
-      {remainingRecent.length > 0 && (
+      {/* CHAPTER 03 — RECENT RECIPES (12-up grid) */}
+      {recentSlice.length > 0 && (
         <section className="border-b border-ink/10 bg-cream">
           <div className="container mx-auto px-6 py-24 md:py-32">
             <div className="flex items-baseline justify-between flex-wrap gap-6 mb-16">
               <div>
                 <div className="section-num mb-3">פרק 03</div>
-                <h2 className="section-title">מהמטבח השבוע</h2>
+                <h2 className="section-title">הכי טריים אצלי</h2>
+                <p className="text-ink-muted mt-4 max-w-md">
+                  {totalCount} מתכונים בארכיון, וזה רק ההתחלה.
+                </p>
               </div>
               <Link
                 href="/search"
@@ -250,7 +263,7 @@ export default async function Home() {
               </Link>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-12">
-              {remainingRecent.map((r, i) => (
+              {recentSlice.map((r, i) => (
                 <RecipeCard key={r.id} recipe={r} index={i + 2} />
               ))}
             </div>
@@ -258,12 +271,59 @@ export default async function Home() {
         </section>
       )}
 
-      {/* CHAPTER 04 — KITCHEN PHILOSOPHY (always visible) */}
+      {/* CHAPTER 04 — BY CHAPTER (3-4 recipes per category, alternating bg) */}
       <section className="border-b border-ink/10">
+        <div className="container mx-auto px-6 py-24 md:py-32">
+          <div className="flex items-baseline justify-between flex-wrap gap-6 mb-16">
+            <div>
+              <div className="section-num mb-3">פרק 04</div>
+              <h2 className="section-title">לפי הפרק</h2>
+              <p className="text-ink-muted mt-4 max-w-md">
+                דוגמאות מכל פרק. תרצי עוד? לחצי על שם הפרק.
+              </p>
+            </div>
+          </div>
+          <div className="space-y-20 md:space-y-28">
+            {categoriesWithCounts.map((cat, cIdx) => (
+              cat.samples.length > 0 && (
+                <div key={cat.id} className="border-t border-ink/10 pt-10 md:pt-14">
+                  <div className="flex items-baseline justify-between flex-wrap gap-4 mb-10">
+                    <div className="flex items-baseline gap-5">
+                      <span className="font-display italic text-4xl md:text-5xl text-burgundy">
+                        {String(cIdx + 1).padStart(2, "0")}
+                      </span>
+                      <h3 className="font-display text-3xl md:text-4xl">
+                        <Link href={`/categories/${encodeURIComponent(cat.slug)}`} className="hover:text-burgundy transition-colors">
+                          {cat.name}
+                        </Link>
+                      </h3>
+                    </div>
+                    <Link
+                      href={`/categories/${encodeURIComponent(cat.slug)}`}
+                      className="text-burgundy text-xs tracking-[0.2em] uppercase border-b border-burgundy pb-1 inline-flex items-center gap-2"
+                    >
+                      {cat.totalRecipes} בפרק
+                      <span>←</span>
+                    </Link>
+                  </div>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-12">
+                    {cat.samples.map((r, i) => (
+                      <RecipeCard key={r.id} recipe={r} index={i} />
+                    ))}
+                  </div>
+                </div>
+              )
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CHAPTER 05 — KITCHEN PHILOSOPHY (always visible, on cream) */}
+      <section className="border-b border-ink/10 bg-cream">
         <div className="container mx-auto px-6 py-24 md:py-32">
           <div className="grid grid-cols-12 gap-8 md:gap-16">
             <div className="col-span-12 md:col-span-4">
-              <div className="section-num mb-3">פרק 04</div>
+              <div className="section-num mb-3">פרק 05</div>
               <h2 className="section-title">פילוסופיית המטבח שלי</h2>
             </div>
             <div className="col-span-12 md:col-span-8 grid md:grid-cols-3 gap-10 md:gap-12">
